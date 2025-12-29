@@ -28,42 +28,35 @@ public class VehicleService {
     private final VehicleRepository vehicleRepository;
     private final UserServiceClient userServiceClient;  // ✅ Inject Feign Client
     
-    /**
-     * Validate if customer exists by calling User Service
-     */
+    
     private void validateCustomerExists(Long customerId) {
         log.info("Validating customer ID: {} with User Service", customerId);
         
         try {
             CustomerResponse customer = userServiceClient.getCustomerById(customerId);
-            log.info("Customer validation successful: Customer ID {} exists with name {}", 
-                     customerId, customer.getName());
+            
         } catch (FeignException. NotFound ex) {
-            log.error("Customer not found:  {}", customerId);
+            
             throw new BadRequestException("Customer with ID " + customerId + " does not exist");
         } catch (FeignException ex) {
-            log.error("Error communicating with User Service: {}", ex.getMessage());
+           
             throw new FeignClientException("Unable to validate customer.  User Service may be unavailable.", ex);
         }
     }
     
-    /**
-     * Create a new vehicle
-     */
+  
     @Transactional
     public VehicleResponse createVehicle(CreateVehicleRequest request) {
-        log.info("Creating vehicle for customer ID: {}", request.getCustomerId());
         
-        // ✅ STEP 1: Validate customer exists via User Service
         validateCustomerExists(request.getCustomerId());
         
-        // STEP 2: Check if registration number already exists
+        
         if (vehicleRepository.existsByRegistrationNumber(request.getRegistrationNumber())) {
             throw new BadRequestException("Vehicle with registration number " + 
                                          request.getRegistrationNumber() + " already exists");
         }
         
-        // STEP 3: Check if VIN number already exists (if provided)
+      
         if (request.getVinNumber() != null && !request.getVinNumber().trim().isEmpty()) {
             if (vehicleRepository.existsByVinNumber(request.getVinNumber())) {
                 throw new BadRequestException("Vehicle with VIN number " + 
@@ -71,7 +64,6 @@ public class VehicleService {
             }
         }
         
-        // STEP 4: Create vehicle entity
         Vehicle vehicle = new Vehicle();
         vehicle.setCustomerId(request.getCustomerId());
         vehicle.setRegistrationNumber(request.getRegistrationNumber());
@@ -89,9 +81,7 @@ public class VehicleService {
         return mapToResponse(savedVehicle);
     }
     
-    /**
-     * Get all vehicles
-     */
+   
     public List<VehicleResponse> getAllVehicles() {
         log.info("Fetching all vehicles");
         
@@ -107,9 +97,7 @@ public class VehicleService {
         return responseList;
     }
     
-    /**
-     * Get vehicle by ID
-     */
+    
     public VehicleResponse getVehicleById(Long vehicleId) {
         log.info("Fetching vehicle by ID: {}", vehicleId);
         
@@ -123,13 +111,11 @@ public class VehicleService {
         return mapToResponse(vehicle);
     }
     
-    /**
-     * Get all vehicles by customer ID
-     */
+    
     public List<VehicleResponse> getVehiclesByCustomerId(Long customerId) {
         log.info("Fetching vehicles for customer ID: {}", customerId);
         
-        // ✅ Validate customer exists
+        
         validateCustomerExists(customerId);
         
         List<Vehicle> vehicles = vehicleRepository.findByCustomerId(customerId);
@@ -144,9 +130,7 @@ public class VehicleService {
         return responseList;
     }
     
-    /**
-     * Update vehicle
-     */
+   
     @Transactional
     public VehicleResponse updateVehicle(Long vehicleId, UpdateVehicleRequest request) {
         log.info("Updating vehicle ID: {}", vehicleId);
@@ -159,7 +143,7 @@ public class VehicleService {
         
         Vehicle vehicle = vehicleOptional.get();
         
-        // Update registration number if provided and different
+       
         if (request.getRegistrationNumber() != null && 
             !request.getRegistrationNumber().equals(vehicle.getRegistrationNumber())) {
             
@@ -213,9 +197,7 @@ public class VehicleService {
         return mapToResponse(updatedVehicle);
     }
     
-    /**
-     * Delete vehicle
-     */
+    
     @Transactional
     public void deleteVehicle(Long vehicleId) {
         log.info("Deleting vehicle ID: {}", vehicleId);
@@ -231,9 +213,7 @@ public class VehicleService {
         log.info("Vehicle deleted successfully: {}", vehicleId);
     }
     
-    /**
-     * Map Vehicle entity to VehicleResponse DTO
-     */
+    
     private VehicleResponse mapToResponse(Vehicle vehicle) {
         return VehicleResponse.builder()
                 . id(vehicle.getId())

@@ -28,10 +28,10 @@ public class Vehicle {
     private String registrationNumber;
     
     @Column(nullable = false, length = 100)
-    private String make; // e.g., Toyota, Honda
+    private String make; 
     
     @Column(nullable = false, length = 100)
-    private String model; // e.g., Camry, Civic
+    private String model; 
     
     @Column(name = "year_of_manufacture")
     private Integer yearOfManufacture;
@@ -40,7 +40,7 @@ public class Vehicle {
     private String color;
     
     @Column(name = "vin_number", length = 50, unique = true)
-    private String vinNumber; // Vehicle Identification Number
+    private String vinNumber; 
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
