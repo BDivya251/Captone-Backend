@@ -1,5 +1,7 @@
 package com.vehiclemanagement.userservice.dto.response;
 
+import com.vehiclemanagement.userservice.enums.UserStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
