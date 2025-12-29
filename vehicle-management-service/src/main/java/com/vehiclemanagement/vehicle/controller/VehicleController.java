@@ -24,10 +24,7 @@ public class VehicleController {
     
     private final VehicleService vehicleService;
     
-    /**
-     * Create a new vehicle
-     * POST /api/vehicles
-     */
+    
     @PostMapping
     public ResponseEntity<VehicleResponse> createVehicle(@Valid @RequestBody CreateVehicleRequest request) {
         log.info("POST /api/vehicles - Create vehicle request received");
@@ -35,10 +32,7 @@ public class VehicleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     
-    /**
-     * Get all vehicles
-     * GET /api/vehicles
-     */
+    
     @GetMapping
     public ResponseEntity<List<VehicleResponse>> getAllVehicles() {
         log.info("GET /api/vehicles - Fetch all vehicles");
@@ -46,10 +40,6 @@ public class VehicleController {
         return ResponseEntity. ok(vehicles);
     }
     
-    /**
-     * Get vehicle by ID
-     * GET /api/vehicles/{vehicleId}
-     */
     @GetMapping("/{vehicleId}")
     public ResponseEntity<VehicleResponse> getVehicleById(@PathVariable Long vehicleId) {
         log.info("GET /api/vehicles/{} - Fetch vehicle by ID", vehicleId);
@@ -57,10 +47,7 @@ public class VehicleController {
         return ResponseEntity.ok(vehicle);
     }
     
-    /**
-     * Get vehicles by customer ID
-     * GET /api/vehicles/customer/{customerId}
-     */
+   
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<List<VehicleResponse>> getVehiclesByCustomerId(@PathVariable Long customerId) {
         log.info("GET /api/vehicles/customer/{} - Fetch vehicles by customer ID", customerId);
@@ -68,10 +55,7 @@ public class VehicleController {
         return ResponseEntity.ok(vehicles);
     }
     
-    /**
-     * Update vehicle
-     * PUT /api/vehicles/{vehicleId}
-     */
+    
     @PutMapping("/{vehicleId}")
     public ResponseEntity<VehicleResponse> updateVehicle(
             @PathVariable Long vehicleId,
@@ -82,10 +66,7 @@ public class VehicleController {
         return ResponseEntity.ok(response);
     }
     
-    /**
-     * Delete vehicle
-     * DELETE /api/vehicles/{vehicleId}
-     */
+    
     @DeleteMapping("/{vehicleId}")
     public ResponseEntity<Map<String, String>> deleteVehicle(@PathVariable Long vehicleId) {
         log.info("DELETE /api/vehicles/{} - Delete vehicle request received", vehicleId);
