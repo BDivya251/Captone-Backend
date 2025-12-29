@@ -1,9 +1,11 @@
-package com.vehiclemanagement.configserver;
+package com.vehiclemanagement.vehicle;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
+@EnableDiscoveryClient
 public class VehicleManagementServiceApplication {
 
 	public static void main(String[] args) {
