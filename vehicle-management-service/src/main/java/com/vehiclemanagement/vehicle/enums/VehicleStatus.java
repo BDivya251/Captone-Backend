@@ -1,5 +1,7 @@
 package com.vehiclemanagement.vehicle.enums;
 
-public class VehicleStatus {
-
+public enum VehicleStatus {
+	ACTIVE,
+	INACTIVE,
+	IN_SERVICE
 }
