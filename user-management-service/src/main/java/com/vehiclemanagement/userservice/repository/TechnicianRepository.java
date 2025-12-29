@@ -1,12 +1,13 @@
 package com.vehiclemanagement.userservice.repository;
 
-import java.util.List;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import com.vehiclemanagement.userservice.entity.Technician;
+import org.springframework.data.jpa. repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface TechnicianRepository extends JpaRepository<Technician,Long>{
-	List<Technician> findByManager_ManagerId(Long managerId);
-    List<Technician> findByIsAvailableTrue();
+import java.util.Optional;
+
+@Repository
+public interface TechnicianRepository extends JpaRepository<Technician, Long> {
+    Optional<Technician> findByUserId(Long userId);
+    boolean existsByUserId(Long userId);
 }

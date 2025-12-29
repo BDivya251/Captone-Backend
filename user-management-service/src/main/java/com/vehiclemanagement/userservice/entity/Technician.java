@@ -1,27 +1,37 @@
 package com.vehiclemanagement.userservice.entity;
+
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok. AllArgsConstructor;
+import lombok.Data;
+import lombok. NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "technicians")
-@Getter @Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Technician {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long technicianId;
-
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "manager_id")
-    private Manager manager;
-
-    private String specialization;
-    private Boolean isAvailable = true;
+    private Long id;
+    
+    @Column(name = "user_id", nullable = false, unique = true)
+    private Long userId;
+    
+    @Column(nullable = false)
+    private String name;
+    
+    @Column(name = "skill_set", length = 500)
+    private String skillSet;
+    
+    @Column(length = 20)
+    private String phone;
+    
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
 }

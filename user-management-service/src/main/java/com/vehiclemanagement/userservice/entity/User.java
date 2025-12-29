@@ -1,46 +1,46 @@
 package com.vehiclemanagement.userservice.entity;
 
+import com.vehiclemanagement.userservice.enums.UserRole;
+import com.vehiclemanagement.userservice.enums.UserStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate. annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
-
-@Builder
 @Entity
 @Table(name = "users")
-@Getter @Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-
+    
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
-
-    @Column(unique = true, nullable = false)
-    private String username;
-
-    @Column(unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType. IDENTITY)
+    private Long id;
+    
+    @Column(nullable = false, unique = true)
     private String email;
-
-    @Column(name = "password_hash", nullable = false)
+    
+    @Column(nullable = false)
     private String password;
-
-    @NotBlank
-    private String firstName;
-
-    @NotBlank
-    private String lastName;
-
-    private String phone;
-
+    
     @Enumerated(EnumType.STRING)
-    private Role role;
-
-    private Boolean isActive = false;
-
-    private LocalDateTime createdAt = LocalDateTime.now();
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    @Column(nullable = false)
+    private UserRole role;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserStatus status = UserStatus.PENDING;
+    
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+    
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 }
