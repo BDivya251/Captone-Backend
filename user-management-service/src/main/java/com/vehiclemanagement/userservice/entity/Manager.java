@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "managers")
@@ -27,6 +28,9 @@ public class Manager {
     
     @Column(length = 20)
     private String phone;
+    
+    @OneToMany(mappedBy = "manager", cascade = CascadeType.ALL)
+    private List<Technician> technicians;
     
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

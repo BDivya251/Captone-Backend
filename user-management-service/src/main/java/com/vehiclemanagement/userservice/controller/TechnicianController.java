@@ -1,12 +1,12 @@
-package com.vehiclemanagement.userservice.controller;
+package com.vehiclemanagement. userservice.controller;
 
-import com.vehiclemanagement.userservice.dto.response. TechnicianResponse;
+import com.vehiclemanagement.userservice.dto.response.TechnicianResponse;
 import com.vehiclemanagement.userservice.dto.response.TechnicianStatsResponse;
 import com.vehiclemanagement.userservice.service.TechnicianService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern. slf4j.Slf4j;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org. springframework.web.bind.annotation.*;
+import org.springframework. web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,6 +24,17 @@ public class TechnicianController {
         log.info("GET /api/technicians - Fetch all technicians");
         List<TechnicianResponse> technicians = technicianService.getAllTechnicians();
         return ResponseEntity.ok(technicians);
+    }
+    
+    /**
+     * Get unassigned technicians (without a manager)
+     * GET /api/technicians/unassigned
+     */
+    @GetMapping("/unassigned")
+    public ResponseEntity<List<TechnicianResponse>> getUnassignedTechnicians() {
+        log.info("GET /api/technicians/unassigned - Fetch unassigned technicians");
+        List<TechnicianResponse> technicians = technicianService.getUnassignedTechnicians();
+        return ResponseEntity. ok(technicians);
     }
     
     @GetMapping("/{technicianId}")

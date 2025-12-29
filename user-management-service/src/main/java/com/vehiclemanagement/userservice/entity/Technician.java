@@ -21,6 +21,9 @@ public class Technician {
     
     @Column(name = "user_id", nullable = false, unique = true)
     private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "manager_id", nullable = true)
+    private Manager manager;
     
     @Column(nullable = false)
     private String name;

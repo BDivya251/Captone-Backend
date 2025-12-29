@@ -1,13 +1,13 @@
-package com. vehiclemanagement.userservice. service;
+package com.vehiclemanagement.userservice.service;
 
-import com.vehiclemanagement.userservice.dto. response.TechnicianResponse;
-import com.vehiclemanagement.userservice.dto.response.TechnicianStatsResponse;
+import com. vehiclemanagement.userservice. dto.response.TechnicianResponse;
+import com.vehiclemanagement. userservice.dto.response.TechnicianStatsResponse;
 import com.vehiclemanagement.userservice.entity.Technician;
 import com.vehiclemanagement.userservice.exception.ResourceNotFoundException;
-import com.vehiclemanagement.userservice.repository.TechnicianRepository;
+import com. vehiclemanagement.userservice. repository.TechnicianRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j. Slf4j;
-import org. springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework. stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +47,24 @@ public class TechnicianService {
         return mapToResponse(technician);
     }
     
+    /**
+     * Get all unassigned technicians (without a manager)
+     */
+    public List<TechnicianResponse> getUnassignedTechnicians() {
+        log.info("Fetching unassigned technicians");
+        
+        List<Technician> technicians = technicianRepository.findByManagerIsNull();
+        List<TechnicianResponse> responseList = new ArrayList<>();
+        
+        for (Technician technician :  technicians) {
+            TechnicianResponse response = mapToResponse(technician);
+            responseList.add(response);
+        }
+        
+        log.info("Found {} unassigned technicians", responseList.size());
+        return responseList;
+    }
+    
     public TechnicianStatsResponse getTechnicianStats(Long technicianId) {
         log.info("Fetching stats for technician ID: {}", technicianId);
         
@@ -57,7 +75,7 @@ public class TechnicianService {
             throw new ResourceNotFoundException("Technician not found with ID: " + technicianId);
         }
         
-        // This will be implemented when service-management microservice is ready
+        // : This will be implemented when service-management microservice is ready
         // For now, return dummy data
         return TechnicianStatsResponse.builder()
                 .technicianId(technicianId)
@@ -74,7 +92,7 @@ public class TechnicianService {
                 .userId(technician.getUserId())
                 .name(technician. getName())
                 .skillSet(technician.getSkillSet())
-                .phone(technician.getPhone())
+                .phone(technician. getPhone())
                 .build();
     }
 }

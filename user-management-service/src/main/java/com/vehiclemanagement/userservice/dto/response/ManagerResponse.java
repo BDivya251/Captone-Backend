@@ -1,5 +1,7 @@
 package com.vehiclemanagement.userservice.dto. response;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok. Builder;
 import lombok.Data;
@@ -14,4 +16,5 @@ public class ManagerResponse {
     private Long userId;
     private String name;
     private String phone;
+    private List<TechnicianResponse> technicians;
 }
