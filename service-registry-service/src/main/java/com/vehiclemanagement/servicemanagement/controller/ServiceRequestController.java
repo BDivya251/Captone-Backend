@@ -165,4 +165,26 @@ public class ServiceRequestController {
         
         return ResponseEntity.ok(response);
     }
+    @GetMapping("/technician/{technicianId}/assigned")
+    public ResponseEntity<List<ServiceRequestResponse>> getAssignedTasksByTechnician(
+            @PathVariable Long technicianId) {
+        List<ServiceRequestResponse> requests = serviceRequestService.getAssignedTasksByTechnician(technicianId);
+        return ResponseEntity. ok(requests);
+    }
+    
+    
+    @GetMapping("/technician/{technicianId}/in-progress")
+    public ResponseEntity<List<ServiceRequestResponse>> getInProgressTasksByTechnician(
+            @PathVariable Long technicianId) {
+        List<ServiceRequestResponse> requests = serviceRequestService.getInProgressTasksByTechnician(technicianId);
+        return ResponseEntity.ok(requests);
+    }
+    
+    
+    @GetMapping("/technician/{technicianId}/completed")
+    public ResponseEntity<List<ServiceRequestResponse>> getCompletedTasksByTechnician(
+            @PathVariable Long technicianId) {
+        List<ServiceRequestResponse> requests = serviceRequestService.getCompletedTasksByTechnician(technicianId);
+        return ResponseEntity. ok(requests);
+    }
 }

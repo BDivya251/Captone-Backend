@@ -59,6 +59,8 @@ public class ServiceRequest {
     
     @Column(name = "completed_date")
     private LocalDateTime completedDate;
+    @Column(name = "labor_cost", precision = 10, scale = 2)
+    private BigDecimal laborCost;
     
     @OneToMany(mappedBy = "serviceRequest", cascade = CascadeType.ALL)
     private List<ServiceImage> images = new ArrayList<>();

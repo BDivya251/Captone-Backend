@@ -66,7 +66,14 @@ public class InventoryController {
         InventoryItemResponse response = inventoryService.updateInventoryItem(itemId, request);
         return ResponseEntity.ok(response);
     }
-    
+    @PostMapping("/{itemId}/update-quantity")
+    public ResponseEntity<InventoryItemResponse> updateQuantityPost(
+            @PathVariable Long itemId,
+            @RequestParam Integer change) {
+      
+        InventoryItemResponse response = inventoryService.updateQuantity(itemId, change);
+        return ResponseEntity.ok(response);
+    }
    
     @PatchMapping("/{itemId}/quantity")
     public ResponseEntity<InventoryItemResponse> updateQuantity(

@@ -54,6 +54,38 @@ public class ServiceRequestService {
     private final InventoryServiceClient inventoryServiceClient;
     private final ServiceBayService serviceBayService;
     
+//Get all assigned tasks for a technician
+    public List<ServiceRequestResponse> getAssignedTasksByTechnician(Long technicianId){
+    	validateTechnician(technicianId);
+    	List<ServiceRequest> requests = serviceRequestRepository.findByTechnicianIdAndStatus(technicianId,"ASSIGNED");
+    	List<ServiceRequestResponse> responseList=new ArrayList<>();
+    	for(ServiceRequest request:requests) {
+    		responseList.add(mapToResponse(request));
+    	}
+    	return responseList;
+    }
+    
+//    Get in progress for a technician
+    public List<ServiceRequestResponse> getInProgressTasksByTechnician(Long technicianId){
+    	validateTechnician(technicianId);
+    	List<ServiceRequest> requests = serviceRequestRepository.findByTechnicianIdAndStatus(technicianId,"IN_PROGRESS");
+    	List<ServiceRequestResponse> responseList=new ArrayList<>();
+    	for(ServiceRequest request:requests) {
+    		responseList.add(mapToResponse(request));
+    	}
+    	return responseList;
+    }
+//    Get Completed by an technician
+    public List<ServiceRequestResponse> getCompletedTasksByTechnician(Long technicianId){
+    	validateTechnician(technicianId);
+    	List<ServiceRequest> requests = serviceRequestRepository.findByTechnicianIdAndStatus(technicianId,"COMPLETED");
+    	List<ServiceRequestResponse> responseList=new ArrayList<>();
+    	for(ServiceRequest request:requests) {
+    		responseList.add(mapToResponse(request));
+    	}
+    	return responseList;
+    }
+    
     /**
      * 1. Create Service Request
      */
@@ -183,6 +215,7 @@ public class ServiceRequestService {
         serviceRequest.setTechnicianId(request.getTechnicianId());
         serviceRequest.setBayNumber(request.getBayNumber());
         serviceRequest.setIsBayAllocated(true);
+        serviceRequest.setLaborCost(request.getLaborCost());
         
         serviceBayService.allocateBay(request.getBayNumber(), serviceRequestId);
         
@@ -219,7 +252,6 @@ public class ServiceRequestService {
         if ("COMPLETED".equals(newStatus) || "CANCELLED".equals(newStatus)) {
             if (serviceRequest.getBayNumber() != null) {
                 serviceBayService.releaseBay(serviceRequest.getBayNumber());
-                log.info("Bay {} released", serviceRequest.getBayNumber());
             }
         }
         
@@ -229,15 +261,11 @@ public class ServiceRequestService {
         }
         
         ServiceRequest updated = serviceRequestRepository.save(serviceRequest);
-        
-        log.info("Status updated successfully");
-        
+      
         return mapToResponse(updated);
     }
     
-    /**
-     * 7. Update Remarks
-     */
+    
     @Transactional
     public ServiceRequestResponse updateRemarks(Long serviceRequestId, String remarks) {
         log.info("Updating remarks for service request ID:  {}", serviceRequestId);
@@ -251,19 +279,14 @@ public class ServiceRequestService {
         serviceRequest.setRemarks(remarks);
         
         ServiceRequest updated = serviceRequestRepository.save(serviceRequest);
-        
-        log.info("Remarks updated successfully");
-        
+      
         return mapToResponse(updated);
     }
     
-    /**
-     * 8. Add Inventory Usage
-     */
+    
     @Transactional
     public void addInventoryUsage(Long serviceRequestId, AddInventoryUsageRequest request) {
-        log.info("Adding inventory usage for service request ID: {}", serviceRequestId);
-        
+      
         Optional<ServiceRequest> requestOptional = serviceRequestRepository.findById(serviceRequestId);
         if (!requestOptional.isPresent()) {
             throw new ResourceNotFoundException("Service request not found with ID: " + serviceRequestId);
@@ -291,19 +314,15 @@ public class ServiceRequestService {
         
         inventoryServiceClient.updateQuantity(request.getInventoryItemId(), item.getQuantity()-request.getQuantity());
         
-        log.info("Inventory usage added successfully");
     }
     
-    /**
-     * 9. Generate Bill
-     */
+   
     @Transactional
     public ServiceBill generateBill(ServiceRequest serviceRequest) {
-        log.info("Generating bill for service request ID: {}", serviceRequest.getId());
         
         Optional<ServiceBill> existingBill = serviceBillRepository.findByServiceRequestId(serviceRequest.getId());
         if (existingBill.isPresent()) {
-            log.info("Bill already exists for this service request");
+            
             return existingBill.get();
         }
         
@@ -314,7 +333,10 @@ public class ServiceRequestService {
             partsCost = partsCost.add(usage.getTotalPrice());
         }
         
-        BigDecimal laborCost = new BigDecimal("500.00");
+        BigDecimal laborCost = serviceRequest.getLaborCost() != null 
+                ? serviceRequest.getLaborCost() 
+                : new BigDecimal("500.00"); // Default fallback
+
         
         BigDecimal subtotal = partsCost.add(laborCost);
         BigDecimal tax = subtotal.multiply(new BigDecimal("0.18"));
@@ -334,14 +356,11 @@ public class ServiceRequestService {
         serviceRequest.setTotalAmount(totalAmount);
         serviceRequestRepository.save(serviceRequest);
         
-        log.info("Bill generated successfully:  {}", bill.getBillNumber());
         
         return savedBill;
     }
     
-    /**
-     * 10. Get All Service Requests
-     */
+  
     public List<ServiceRequestResponse> getAllServiceRequests() {
         log.info("Fetching all service requests");
         
@@ -355,9 +374,7 @@ public class ServiceRequestService {
         return responseList;
     }
     
-    /**
-     * 11. Get Service Request by ID
-     */
+    
     public ServiceRequestResponse getServiceRequestById(Long serviceRequestId) {
         log.info("Fetching service request by ID: {}", serviceRequestId);
         
@@ -368,10 +385,7 @@ public class ServiceRequestService {
         
         return mapToResponse(requestOptional. get());
     }
-    
-    /**
-     * 12. Get Service Requests by Customer ID
-     */
+ 
     public List<ServiceRequestResponse> getServiceRequestsByCustomerId(Long customerId) {
         log.info("Fetching service requests for customer ID: {}", customerId);
         
@@ -385,9 +399,7 @@ public class ServiceRequestService {
         return responseList;
     }
     
-    /**
-     * 13. Get Service Requests by Technician ID
-     */
+   
     public List<ServiceRequestResponse> getServiceRequestsByTechnicianId(Long technicianId) {
         log.info("Fetching service requests for technician ID: {}", technicianId);
         
@@ -401,9 +413,7 @@ public class ServiceRequestService {
         return responseList;
     }
     
-    /**
-     * 14. Get Service Requests by Status
-     */
+   
     public List<ServiceRequestResponse> getServiceRequestsByStatus(String status) {
         log.info("Fetching service requests with status: {}", status);
         
@@ -417,9 +427,7 @@ public class ServiceRequestService {
         return responseList;
     }
     
-    /**
-     * 15. Delete Service Request
-     */
+    
     @Transactional
     public void deleteServiceRequest(Long serviceRequestId) {
         log.info("Deleting service request ID: {}", serviceRequestId);
@@ -434,10 +442,7 @@ public class ServiceRequestService {
         log.info("Service request deleted successfully");
     }
     
-    // ============================================
-    // HELPER METHODS
-    // ============================================
-    
+ 
     private void validateCustomer(Long customerId) {
         try {
             CustomerResponse customer = userServiceClient.getCustomerById(customerId);
@@ -539,6 +544,7 @@ public class ServiceRequestService {
                 .remarks(request.getRemarks())
                 .totalAmount(request.getTotalAmount())
                 .requestDate(request.getRequestDate())
+                .laborCost(request.getLaborCost())
                 .completedDate(request.getCompletedDate())
                 .imageIds(imageIds)
                 .inventoryUsages(usageResponses)

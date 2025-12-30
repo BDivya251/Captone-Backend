@@ -29,6 +29,7 @@ public class ServiceRequestResponse {
     private LocalDateTime requestDate;
     private LocalDateTime completedDate;
     private List<String> imageIds;
+    private BigDecimal laborCost;
     private List<InventoryUsageResponse> inventoryUsages;
     private ServiceBillResponse bill;
 }

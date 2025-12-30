@@ -13,4 +13,5 @@ public interface ServiceRequestRepository extends JpaRepository<ServiceRequest,L
 	    List<ServiceRequest> findByTechnicianId(Long technicianId);
 	    List<ServiceRequest> findByStatus(String status);
 	    List<ServiceRequest> findByVehicleId(Long vehicleId);
+	    List<ServiceRequest> findByTechnicianIdAndStatus(Long technicianId,String status);
 }

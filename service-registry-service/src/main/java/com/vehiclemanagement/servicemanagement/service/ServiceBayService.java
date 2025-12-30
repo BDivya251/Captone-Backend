@@ -24,7 +24,6 @@ public class ServiceBayService {
     
     @Transactional
     public ServiceBayResponse createServiceBay(CreateServiceBayRequest request) {
-        log.info("Creating service bay: {}", request. getBayNumber());
         
         if (serviceBayRepository.existsByBayNumber(request.getBayNumber())) {
             throw new BadRequestException("Service bay already exists with number: " + request.getBayNumber());
@@ -38,14 +37,11 @@ public class ServiceBayService {
         
         ServiceBay saved = serviceBayRepository.save(bay);
         
-        log. info("Service bay created successfully");
-        
         return mapToResponse(saved);
     }
     
     public List<ServiceBayResponse> getAllServiceBays() {
-        log.info("Fetching all service bays");
-        
+       
         List<ServiceBay> bays = serviceBayRepository.findAll();
         List<ServiceBayResponse> responseList = new ArrayList<>();
         
@@ -57,7 +53,6 @@ public class ServiceBayService {
     }
     
     public List<ServiceBayResponse> getAvailableServiceBays() {
-        log.info("Fetching available service bays");
         
         List<ServiceBay> bays = serviceBayRepository.findByIsAvailableAndIsActive(true, true);
         List<ServiceBayResponse> responseList = new ArrayList<>();
@@ -65,8 +60,6 @@ public class ServiceBayService {
         for (ServiceBay bay : bays) {
             responseList.add(mapToResponse(bay));
         }
-        
-        log.info("Found {} available bays", responseList.size());
         
         return responseList;
     }
@@ -88,8 +81,7 @@ public class ServiceBayService {
     
     @Transactional
     public void allocateBay(String bayNumber, Long serviceRequestId) {
-        log.info("Allocating bay {} to service request {}", bayNumber, serviceRequestId);
-        
+       
         ServiceBay bay = getBayByNumber(bayNumber);
         
         if (!bay.getIsAvailable()) {
@@ -105,28 +97,21 @@ public class ServiceBayService {
         bay.setCurrentServiceRequestId(serviceRequestId);
         
         serviceBayRepository. save(bay);
-        
-        log.info("Bay allocated successfully");
     }
     
     @Transactional
     public void releaseBay(String bayNumber) {
-        log.info("Releasing bay:  {}", bayNumber);
-        
+      
         ServiceBay bay = getBayByNumber(bayNumber);
         
         bay.setIsAvailable(true);
         bay.setCurrentServiceRequestId(null);
         
         serviceBayRepository.save(bay);
-        
-        log.info("Bay released successfully");
     }
     
     @Transactional
     public void deleteServiceBay(Long bayId) {
-        log.info("Deleting service bay ID:  {}", bayId);
-        
         Optional<ServiceBay> bayOptional = serviceBayRepository. findById(bayId);
         
         if (!bayOptional.isPresent()) {
@@ -140,8 +125,6 @@ public class ServiceBayService {
         }
         
         serviceBayRepository.deleteById(bayId);
-        
-        log.info("Service bay deleted successfully");
     }
     
     private ServiceBayResponse mapToResponse(ServiceBay bay) {
