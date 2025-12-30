@@ -93,6 +93,7 @@ public class TechnicianService {
                 .name(technician. getName())
                 .skillSet(technician.getSkillSet())
                 .phone(technician. getPhone())
+                
                 .build();
     }
 }
