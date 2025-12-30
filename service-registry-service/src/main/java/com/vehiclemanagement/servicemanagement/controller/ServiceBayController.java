@@ -2,6 +2,7 @@ package com.vehiclemanagement.servicemanagement.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/vehicle/service-bays")
 public class ServiceBayController {
 	private final ServiceBayService serviceBayService;
+	@PostMapping
 	public ResponseEntity<ServiceBayResponse> createServiceBay(@Valid @RequestBody CreateServiceBayRequest request){
 		ServiceBayResponse response=serviceBayService.createServiceBay(request);
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
