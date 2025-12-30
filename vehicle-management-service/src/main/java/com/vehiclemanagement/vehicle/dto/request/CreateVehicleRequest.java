@@ -33,7 +33,7 @@ public class CreateVehicleRequest {
     
     @Size(max = 50, message = "Color must not exceed 50 characters")
     private String color;
-    
+    @NotBlank(message = "VIN is required")
     @Size(max = 50, message = "VIN number must not exceed 50 characters")
     private String vinNumber;
     

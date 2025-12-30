@@ -26,7 +26,7 @@ import java.util.Optional;
 public class VehicleService {
     
     private final VehicleRepository vehicleRepository;
-    private final UserServiceClient userServiceClient;  // ✅ Inject Feign Client
+    private final UserServiceClient userServiceClient;  // Inject Feign Client
     
     
     private void validateCustomerExists(Long customerId) {
@@ -75,9 +75,6 @@ public class VehicleService {
         vehicle.setNotes(request.getNotes());
         
         Vehicle savedVehicle = vehicleRepository.save(vehicle);
-        
-        log.info("Vehicle created successfully with ID: {}", savedVehicle.getId());
-        
         return mapToResponse(savedVehicle);
     }
     

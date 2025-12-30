@@ -48,9 +48,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.SERVICE_UNAVAILABLE);
     }
     
-    /**
-     * Handle Feign exceptions (when User Service call fails)
-     */
+   
     @ExceptionHandler(FeignException. class)
     public ResponseEntity<Map<String, Object>> handleFeignException(FeignException ex) {
         Map<String, Object> errorResponse = new HashMap<>();
