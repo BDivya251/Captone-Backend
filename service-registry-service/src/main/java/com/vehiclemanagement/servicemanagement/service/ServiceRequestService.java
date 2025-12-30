@@ -53,7 +53,8 @@ public class ServiceRequestService {
     private final VehicleServiceClient vehicleServiceClient;
     private final InventoryServiceClient inventoryServiceClient;
     private final ServiceBayService serviceBayService;
-    
+    private final QRCodeService qrCodeService;
+    private final EmailService emailService;
 //Get all assigned tasks for a technician
     public List<ServiceRequestResponse> getAssignedTasksByTechnician(Long technicianId){
     	validateTechnician(technicianId);
@@ -257,12 +258,67 @@ public class ServiceRequestService {
         
         if ("COMPLETED".equals(newStatus)) {
             serviceRequest.setCompletedDate(LocalDateTime.now());
-            generateBill(serviceRequest);
+            ServiceBill bill=generateBill(serviceRequest);
+            try {
+                sendCompletionEmailWithQR(serviceRequest, bill);
+            } catch (Exception e) {
+                log.error("Error sending completion email: {}", e.getMessage(), e);
+               
+            }
         }
         
         ServiceRequest updated = serviceRequestRepository.save(serviceRequest);
       
         return mapToResponse(updated);
+    }
+    private void sendCompletionEmailWithQR(ServiceRequest serviceRequest, ServiceBill bill) {
+        log.info("Sending completion email for service request ID: {}", serviceRequest.getId());
+        
+        try {
+            // Get customer details
+            CustomerResponse customer = userServiceClient.getCustomerById(serviceRequest.getCustomerId());
+            
+            // Get vehicle details
+            VehicleResponse vehicle = vehicleServiceClient.getVehicleById(serviceRequest.getVehicleId());
+            String vehicleInfo = vehicle.getRegistrationNumber() + " - " + vehicle.getMake() + " " + vehicle.getModel();
+            
+            // Get technician name
+            String technicianName = "N/A";
+            if (serviceRequest.getTechnicianId() != null) {
+                try {
+                    TechnicianResponse technician = userServiceClient.getTechnicianById(serviceRequest.getTechnicianId());
+                    technicianName = technician.getName();
+                } catch (Exception e) {
+                    log.warn("Could not fetch technician details: {}", e.getMessage());
+                }
+            }
+            
+            // Get parts used
+            List<InventoryUsage> partsUsed = inventoryUsageRepository.findByServiceRequestId(serviceRequest.getId());
+            
+            // Generate QR code
+            String qrCodeBase64 = qrCodeService.generateQRCodeBase64(serviceRequest.getId());
+            String detailsUrl = qrCodeService.getDetailsUrl(serviceRequest.getId());
+            
+            // Send email
+            emailService.sendServiceCompletionEmail(
+                customer.getEmail(),
+                customer.getName(),
+                serviceRequest,
+                bill,
+                vehicleInfo,
+                technicianName,
+                partsUsed,
+                qrCodeBase64,
+                detailsUrl
+            );
+            
+            log.info("Completion email sent successfully to: {}", customer.getEmail());
+            
+        } catch (Exception e) {
+            log.error("Failed to send completion email: {}", e.getMessage(), e);
+            throw e;
+        }
     }
     
     

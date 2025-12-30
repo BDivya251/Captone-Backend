@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .email-container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #4CAF50;
+            margin: 0;
+        }
+        .success-badge {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            margin: 15px 0;
+        }
+        .detail-section {
+            margin:  20px 0;
+            padding: 15px;
+            background-color:  #f9f9f9;
+            border-left: 4px solid #4CAF50;
+            border-radius: 5px;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        .label {
+            font-weight: bold;
+            color: #555;
+        }
+        .value {
+            color: #333;
+            text-align: right;
+        }
+        .bill-table {
+            width: 100%;
+            margin:  20px 0;
+            border-collapse: collapse;
+        }
+        .bill-table th {
+            background-color: #4CAF50;
+            color:  white;
+            padding: 12px;
+            text-align:  left;
+        }
+        .bill-table td {
+            padding: 10px;
+            border-bottom:  1px solid #ddd;
+        }
+        .bill-table tr:hover {
+            background-color: #f5f5f5;
+        }
+        .total-row {
+            background-color: #4CAF50;
+            color:  white;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .qr-section {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f0f8ff;
+            border-radius:  10px;
+        }
+        .qr-code {
+            max-width: 250px;
+            border: 3px solid #4CAF50;
+            border-radius: 10px;
+            padding: 10px;
+            background-color: white;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+            color: #777;
+            font-size: 0.9em;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <h1 th:text="${companyName}">Vehicle Service Center</h1>
+            <div class="success-badge">✓ Service Completed</div>
+        </div>
+        
+        <!-- Greeting -->
+        <p>Dear <strong th:text="${customerName}">Customer</strong>,</p>
+        <p>Your vehicle service has been successfully completed!  Here are the details:</p>
+        
+        <!-- Service Details -->
+        <div class="detail-section">
+            <h3 style="margin-top: 0; color: #4CAF50;">Service Details</h3>
+            <div class="detail-row">
+                <span class="label">Bill Number:</span>
+                <span class="value" th:text="${billNumber}">BILL-12345</span>
+            </div>
+            <div class="detail-row">
+                <span class="label">Vehicle:</span>
+                <span class="value" th:text="${vehicleInfo}">Toyota Camry</span>
+            </div>
+            <div class="detail-row">
+                <span class="label">Service Type:</span>
+                <span class="value" th:text="${requestType}">REPAIR</span>
+            </div>
+            <div class="detail-row">
+                <span class="label">Service Bay:</span>
+                <span class="value" th:text="${bayNumber}">BAY-01</span>
+            </div>
+            <div class="detail-row">
+                <span class="label">Technician:</span>
+                <span class="value" th:text="${technicianName}">John Doe</span>
+            </div>
+            <div class="detail-row">
+                <span class="label">Completed On:</span>
+                <span class="value" th:text="${completedDate}">30 Dec 2024</span>
+            </div>
+        </div>
+        
+        <!-- Parts Used -->
+        <div th:if="${partsUsed != null and ! partsUsed.isEmpty()}" class="detail-section">
+            <h3 style="margin-top: 0; color:  #4CAF50;">Parts Used</h3>
+            <table class="bill-table">
+                <thead>
+                    <tr>
+                        <th>Part Name</th>
+                        <th>Qty</th>
+                        <th>Unit Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="part : ${partsUsed}">
+                        <td th:text="${part.partName}">Brake Pad</td>
+                        <td th:text="${part. quantity}">2</td>
+                        <td th:text="${part.unitPrice}">₹45.99</td>
+                        <td th:text="${part.totalPrice}">₹91.98</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Bill Summary -->
+        <div class="detail-section">
+            <h3 style="margin-top:  0; color: #4CAF50;">Bill Summary</h3>
+            <table class="bill-table">
+                <tr>
+                    <td><strong>Labor Cost</strong></td>
+                    <td class="value" th:text="${laborCost}">₹500.00</td>
+                </tr>
+                <tr>
+                    <td><strong>Parts Cost</strong></td>
+                    <td class="value" th:text="${partsCost}">₹106.45</td>
+                </tr>
+                <tr>
+                    <td><strong>Tax (18% GST)</strong></td>
+                    <td class="value" th:text="${tax}">₹109.16</td>
+                </tr>
+                <tr class="total-row">
+                    <td><strong>TOTAL AMOUNT</strong></td>
+                    <td class="value" th:text="${totalAmount}">₹715.61</td>
+                </tr>
+            </table>
+        </div>
+        
+        <!-- QR Code Section -->
+        <div class="qr-section">
+            <h3 style="color: #4CAF50;">📱 Scan QR Code for Full Details</h3>
+            <p>Scan this QR code to view complete service details, warranty info, and more:</p>
+            <img th:src="'data:image/png;base64,' + ${qrCodeBase64}" 
+                 alt="QR Code" 
+                 class="qr-code"/>
+            <p style="margin-top: 15px;">
+                <a th:href="${detailsUrl}" class="button">View Online</a>
+            </p>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p>Thank you for choosing <span th:text="${companyName}">Vehicle Service Center</span>! </p>
+            <p>For any queries, contact us at:  <a th:href="'mailto:' + ${supportEmail}" th:text="${supportEmail}">support@example.com</a></p>
+            <p style="font-size: 0.8em; color: #999;">
+                This is an automated email.  Please do not reply to this message.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

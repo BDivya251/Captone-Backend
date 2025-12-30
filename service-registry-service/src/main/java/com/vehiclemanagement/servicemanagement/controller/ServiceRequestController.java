@@ -30,6 +30,24 @@ import java.util.Map;
 public class ServiceRequestController {
     
     private final ServiceRequestService serviceRequestService;
+//    public endpoint
+    @GetMapping("/{serviceRequestId}/public-details")
+    public ResponseEntity<Map<String, Object>> getPublicServiceDetails(@PathVariable Long serviceRequestId) {
+       
+        ServiceRequestResponse request = serviceRequestService.getServiceRequestById(serviceRequestId);
+        
+        Map<String, Object> details = new HashMap<>();
+        details.put("serviceRequestId",request.getId());
+        details.put("requestType",request.getRequestType());
+        details.put("status",request.getStatus());
+        details.put("bayNumber",request.getBayNumber());
+        details.put("laborCost",request.getLaborCost());
+        details.put("completedDate",request.getCompletedDate());
+        details.put("bill",request.getBill());
+        details.put("partsUsed",request.getInventoryUsages());
+        
+        return ResponseEntity.ok(details);
+    }
     
     @PostMapping
     public ResponseEntity<ServiceRequestResponse> createServiceRequest(
