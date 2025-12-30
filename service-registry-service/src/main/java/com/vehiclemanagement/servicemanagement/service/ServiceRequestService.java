@@ -6,6 +6,7 @@ import com.vehiclemanagement.servicemanagement. client.VehicleServiceClient;
 import com.vehiclemanagement.servicemanagement.feign.CustomerResponse;
 import com.vehiclemanagement.servicemanagement.feign. InventoryItemResponse;
 import com.vehiclemanagement.servicemanagement.feign.TechnicianResponse;
+import com.vehiclemanagement.servicemanagement.feign.User;
 import com.vehiclemanagement.servicemanagement.feign.VehicleResponse;
 import com. vehiclemanagement.servicemanagement.dto.request.AddInventoryUsageRequest;
 import com.vehiclemanagement.servicemanagement.dto.request.AssignManagerRequest;
@@ -261,6 +262,7 @@ public class ServiceRequestService {
             ServiceBill bill=generateBill(serviceRequest);
             try {
                 sendCompletionEmailWithQR(serviceRequest, bill);
+                log.info("Email sent");
             } catch (Exception e) {
                 log.error("Error sending completion email: {}", e.getMessage(), e);
                
@@ -277,7 +279,7 @@ public class ServiceRequestService {
         try {
             // Get customer details
             CustomerResponse customer = userServiceClient.getCustomerById(serviceRequest.getCustomerId());
-            
+            User user=userServiceClient.getUserDetails(customer.getUserId());
             // Get vehicle details
             VehicleResponse vehicle = vehicleServiceClient.getVehicleById(serviceRequest.getVehicleId());
             String vehicleInfo = vehicle.getRegistrationNumber() + " - " + vehicle.getMake() + " " + vehicle.getModel();
@@ -302,7 +304,7 @@ public class ServiceRequestService {
             
             // Send email
             emailService.sendServiceCompletionEmail(
-                customer.getEmail(),
+                user.getEmail(),
                 customer.getName(),
                 serviceRequest,
                 bill,
@@ -313,7 +315,7 @@ public class ServiceRequestService {
                 detailsUrl
             );
             
-            log.info("Completion email sent successfully to: {}", customer.getEmail());
+            log.info("Completion email sent successfully to: {}", user.getEmail());
             
         } catch (Exception e) {
             log.error("Failed to send completion email: {}", e.getMessage(), e);

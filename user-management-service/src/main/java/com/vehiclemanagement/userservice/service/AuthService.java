@@ -20,6 +20,9 @@ import com.vehiclemanagement.userservice.repository.TechnicianRepository;
 import com.vehiclemanagement. userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Optional;
+
 import org.springframework. stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -128,6 +131,10 @@ public class AuthService {
                 .role(savedUser.getRole().name())
                 .status(savedUser.getStatus().name())
                 .build();
+    }
+    public User getByKey(Long id) {
+    	Optional<User> user= userRepository.findById(id);
+    	return user.get();
     }
     
     @Transactional

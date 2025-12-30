@@ -26,10 +26,7 @@ public class TechnicianController {
         return ResponseEntity.ok(technicians);
     }
     
-    /**
-     * Get unassigned technicians (without a manager)
-     * GET /api/technicians/unassigned
-     */
+    
     @GetMapping("/unassigned")
     public ResponseEntity<List<TechnicianResponse>> getUnassignedTechnicians() {
         log.info("GET /api/technicians/unassigned - Fetch unassigned technicians");

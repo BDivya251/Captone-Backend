@@ -20,14 +20,14 @@ public class CustomerController {
     
     @GetMapping
     public ResponseEntity<List<CustomerResponse>> getAllCustomers() {
-        log.info("GET /api/customers - Fetch all customers");
+      
         List<CustomerResponse> customers = customerService.getAllCustomers();
         return ResponseEntity.ok(customers);
     }
     
     @GetMapping("/{customerId}")
     public ResponseEntity<CustomerResponse> getCustomerById(@PathVariable Long customerId) {
-        log.info("GET /api/customers/{} - Fetch customer by ID", customerId);
+     
         CustomerResponse customer = customerService.getCustomerById(customerId);
         return ResponseEntity.ok(customer);
     }

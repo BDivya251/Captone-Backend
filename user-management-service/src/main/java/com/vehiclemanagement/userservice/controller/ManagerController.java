@@ -35,10 +35,7 @@ public class ManagerController {
         return ResponseEntity.ok(manager);
     }
     
-    /**
-     * Assign technician to manager
-     * POST /api/managers/{managerId}/assign-technician/{technicianId}
-     */
+   
     @PostMapping("/{managerId}/assign-technician/{technicianId}")
     public ResponseEntity<Map<String, String>> assignTechnicianToManager(
             @PathVariable Long managerId,
@@ -56,10 +53,7 @@ public class ManagerController {
         return ResponseEntity.ok(response);
     }
     
-    /**
-     * Get all technicians under a specific manager
-     * GET /api/managers/{managerId}/technicians
-     */
+   
     @GetMapping("/{managerId}/technicians")
     public ResponseEntity<List<TechnicianResponse>> getTechniciansByManager(
             @PathVariable Long managerId) {
@@ -71,10 +65,7 @@ public class ManagerController {
         return ResponseEntity.ok(technicians);
     }
     
-    /**
-     * Activate manager status
-     * PUT /api/managers/{managerId}/activate
-     */
+    
     @PutMapping("/user/{userId}/activate")
     public ResponseEntity<Map<String, String>> activateManager(@PathVariable Long userId) {
         log.info("PUT /api/managers/user/{}/activate", userId);

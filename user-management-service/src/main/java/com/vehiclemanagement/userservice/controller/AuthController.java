@@ -6,6 +6,7 @@ import com.vehiclemanagement.userservice.dto. request.RegisterManagerRequest;
 import com.vehiclemanagement.userservice.dto.request.RegisterTechnicianRequest;
 import com.vehiclemanagement.userservice.dto.response. LoginResponse;
 import com.vehiclemanagement.userservice.dto.response.UserResponse;
+import com.vehiclemanagement.userservice.entity.User;
 import com.vehiclemanagement.userservice.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -49,5 +50,9 @@ public class AuthController {
         log.info("POST /api/auth/register/customer - Customer registration request received");
         UserResponse response = authService.registerCustomer(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+    @GetMapping("/user/{id}")
+    public User getUserDetails(@PathVariable Long id) {
+    	return authService.getByKey(id);
     }
 }
