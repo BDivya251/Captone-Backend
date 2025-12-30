@@ -1,5 +1,6 @@
 package com.vehiclemanagement.servicemanagement.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,8 +14,8 @@ public class CreateServiceRequestRequest {
 	private Long CustomerId;
 	@NotNull(message="VehicleId is required")
 	private Long vehicleId;
-	@NotNull(message="requestType is required")
+	@NotBlank(message="requestType is required")
 	private String requestType; //Repair,Maintenance,Inception
-	@NotNull(message="Desciption is required")
+	@NotBlank(message="Desciption is required")
 	private String description;
 }
