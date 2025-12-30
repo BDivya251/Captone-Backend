@@ -18,6 +18,6 @@ public interface UserServiceClient {
     TechnicianResponse getTechnicianById(@PathVariable("technicianId") Long technicianId);
     
 
-    @GetMapping("api/user/{id}")
+    @GetMapping("api/auth/user/{id}")
     User getUserDetails(@PathVariable Long id);
 }

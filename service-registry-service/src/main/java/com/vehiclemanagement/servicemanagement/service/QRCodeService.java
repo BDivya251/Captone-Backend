@@ -36,7 +36,9 @@ public class QRCodeService {
             String base64QRCode = Base64.getEncoder().encodeToString(qrCodeBytes);
             
             log.info("QR code generated successfully");
-            return base64QRCode;
+//            return base64QRCode;
+            return "data:image/png;base64," + base64QRCode;
+
             
         } catch (WriterException | IOException e) {
             throw new RuntimeException("Failed to generate QR code", e);
