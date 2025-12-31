@@ -56,10 +56,9 @@ public class ManagerService {
         return mapToResponse(manager);
     }
     
-    /**
-     * Assign technician to manager and activate both if needed
-     * Allows reassignment to different manager
-     */
+//     Assign technician to manager and activate both if needed
+//     Allows reassignment to different manager
+     
     @Transactional
     public void assignTechnicianToManager(Long managerId, Long technicianId) {
         log.info("Assigning technician ID: {} to manager ID: {}", technicianId, managerId);
@@ -97,12 +96,9 @@ public class ManagerService {
         log.info("Successfully assigned technician ID: {} to manager ID: {}", technicianId, managerId);
     }
     
-    /**
-     * Activate manager status to ACTIVE
-     */
+
     @Transactional
     public void activateManagerStatus(Long userId) {
-        log.info("Activating manager with user ID: {}", userId);
         
         Optional<User> userOptional = userRepository.findById(userId);
         if (!userOptional.isPresent()) {
@@ -112,23 +108,18 @@ public class ManagerService {
         User user = userOptional. get();
         
         if (user.getStatus() == UserStatus.ACTIVE) {
-            log.info("Manager user ID: {} is already active", userId);
             return;
         }
         
         user.setStatus(UserStatus. ACTIVE);
         userRepository. save(user);
         
-        log.info("Manager user ID:  {} status changed to ACTIVE", userId);
     }
     
-    /**
-     * Activate technician status to ACTIVE
-     */
+    
     @Transactional
     public void activateTechnicianStatus(Long userId) {
-        log.info("Activating technician with user ID: {}", userId);
-        
+       
         Optional<User> userOptional = userRepository.findById(userId);
         if (!userOptional.isPresent()) {
             throw new ResourceNotFoundException("User not found with ID: " + userId);
@@ -137,19 +128,15 @@ public class ManagerService {
         User user = userOptional.get();
         
         if (user.getStatus() == UserStatus.ACTIVE) {
-            log.info("Technician user ID:  {} is already active", userId);
             return;
         }
         
         user.setStatus(UserStatus.ACTIVE);
         userRepository.save(user);
         
-        log.info("Technician user ID: {} status changed to ACTIVE", userId);
-    }
+          }
     
-    /**
-     * Get all technicians under a specific manager
-     */
+    
     public List<TechnicianResponse> getTechniciansByManagerId(Long managerId) {
         log.info("Fetching technicians for manager ID: {}", managerId);
         
@@ -173,8 +160,7 @@ public class ManagerService {
             responseList.add(response);
         }
         
-        log.info("Found {} technicians for manager ID: {}", responseList. size(), managerId);
-        return responseList;
+      return responseList;
     }
     
     private ManagerResponse mapToResponse(Manager manager) {
