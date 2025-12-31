@@ -10,9 +10,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class LoginResponse {
-    private Long userId;
-    private String email;
-    private String role;
-    private String token; // Placeholder for JWT (to be implemented later)
-    private String message;
+	 private String token;           
+	    private String tokenType = "Bearer"; 
+	    private Long userId;               
+	    private String email;             
+	    private String role;               
+	    private String name;         
+	    private Long entityId;
+	    private String message; 
 }

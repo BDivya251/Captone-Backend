@@ -14,15 +14,20 @@ import com.vehiclemanagement.userservice.enums.UserRole;
 import com.vehiclemanagement.userservice.enums.UserStatus;
 import com.vehiclemanagement.userservice.exception.BadRequestException;
 import com.vehiclemanagement. userservice.exception.ResourceNotFoundException;
+import com.vehiclemanagement.userservice.repository.AdminRepository;
 import com.vehiclemanagement.userservice.repository.CustomerRepository;
 import com.vehiclemanagement.userservice.repository. ManagerRepository;
 import com.vehiclemanagement.userservice.repository.TechnicianRepository;
 import com.vehiclemanagement. userservice.repository.UserRepository;
+import com.vehiclemanagement.userservice.util.JwtUtil;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework. stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,12 +35,17 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthService {
-    
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtUtil jwtUtil;
+	
     private final UserRepository userRepository;
     private final ManagerRepository managerRepository;
     private final TechnicianRepository technicianRepository;
     private final CustomerRepository customerRepository;
-    
+    private final AdminRepository adminRepository;
     public LoginResponse login(LoginRequest request) {
         log.info("Login attempt for email: {}", request. getEmail());
         
