@@ -1,6 +1,9 @@
 package com.vehiclemanagement.userservice.dto.response;
 
+import java.util.List;
+
 import com.vehiclemanagement.userservice.enums.UserRole;
+import com.vehiclemanagement.userservice.enums.UserStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,16 +11,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class LoginResponse {
-    private String token;
-    private String tokenType = "Bearer";
-    private Long userId;
+public class RegisterResponse {
+	private Long userId;
     private String email;
-    private UserRole role;
-    private String name;
-    private Long entityId;
+    private String role;
+    private String status;
     private String message;
+    
 }

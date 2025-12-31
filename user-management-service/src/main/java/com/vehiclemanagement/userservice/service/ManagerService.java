@@ -105,13 +105,13 @@ public class ManagerService {
             throw new ResourceNotFoundException("User not found with ID: " + userId);
         }
         
-        User user = userOptional. get();
+        User user = userOptional.get();
         
         if (user.getStatus() == UserStatus.ACTIVE) {
             return;
         }
         
-        user.setStatus(UserStatus. ACTIVE);
+        user.setStatus(UserStatus.ACTIVE);
         userRepository. save(user);
         
     }

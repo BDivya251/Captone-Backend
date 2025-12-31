@@ -1,7 +1,5 @@
 package com.vehiclemanagement.userservice.dto.response;
 
-import com.vehiclemanagement.userservice.enums.UserRole;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,13 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class LoginResponse {
-    private String token;
-    private String tokenType = "Bearer";
+public class AdminResponse {
+    private Long id;
     private Long userId;
-    private String email;
-    private UserRole role;
     private String name;
-    private Long entityId;
-    private String message;
+    private String phone;
+    private String email;
+    private String status;
 }

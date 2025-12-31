@@ -1,7 +1,7 @@
 package com.vehiclemanagement.userservice.util;
 
-import io. jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken. Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,16 +31,19 @@ public class JwtUtil {
         claims.put("userId", userId);
         claims.put("role", role);
         
-        // Add entity-specific ID for ownership checks
+        // Add entity-specific ID based on role
         switch (role) {
-            case "CUSTOMER":
-                claims.put("customerId", entityId);
+            case "ADMIN":
+                claims.put("adminId", entityId);
+                break;
+            case "MANAGER": 
+                claims.put("managerId", entityId);
                 break;
             case "TECHNICIAN":
                 claims.put("technicianId", entityId);
                 break;
-            case "MANAGER":
-                claims.put("managerId", entityId);
+            case "CUSTOMER":
+                claims.put("customerId", entityId);
                 break;
         }
         
@@ -52,7 +55,7 @@ public class JwtUtil {
                 .signWith(getSigningKey(), SignatureAlgorithm. HS256)
                 .compact();
     }
-   
+    
     public String extractEmail(String token) {
         return extractAllClaims(token).getSubject();
     }
@@ -60,26 +63,10 @@ public class JwtUtil {
     public Long extractUserId(String token) {
         return extractAllClaims(token).get("userId", Long.class);
     }
-   
+    
     public String extractRole(String token) {
         return extractAllClaims(token).get("role", String.class);
     }
-    
-   
-    public Long extractCustomerId(String token) {
-        return extractAllClaims(token).get("customerId", Long.class);
-    }
-    
- 
-    public Long extractTechnicianId(String token) {
-        return extractAllClaims(token).get("technicianId", Long.class);
-    }
-    
-   
-    public Long extractManagerId(String token) {
-        return extractAllClaims(token).get("managerId", Long.class);
-    }
-    
     
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
@@ -89,13 +76,12 @@ public class JwtUtil {
                 .getBody();
     }
     
-  
     public Boolean isTokenExpired(String token) {
         return extractAllClaims(token).getExpiration().before(new Date());
     }
-   
+    
     public Boolean validateToken(String token, String email) {
         final String tokenEmail = extractEmail(token);
-        return (tokenEmail.equals(email) && !isTokenExpired(token));
+        return (tokenEmail. equals(email) && !isTokenExpired(token));
     }
 }

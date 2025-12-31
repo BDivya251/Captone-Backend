@@ -5,6 +5,7 @@ import com.vehiclemanagement.userservice.dto.request.RegisterCustomerRequest;
 import com.vehiclemanagement.userservice.dto. request.RegisterManagerRequest;
 import com.vehiclemanagement.userservice.dto.request.RegisterTechnicianRequest;
 import com.vehiclemanagement.userservice.dto.response. LoginResponse;
+import com.vehiclemanagement.userservice.dto.response.RegisterResponse;
 import com.vehiclemanagement.userservice.dto.response.UserResponse;
 import com.vehiclemanagement.userservice.entity.User;
 import com.vehiclemanagement.userservice.service.AuthService;
@@ -32,23 +33,22 @@ public class AuthController {
     }
     
     @PostMapping("/register/manager")
-    public ResponseEntity<UserResponse> registerManager(@Valid @RequestBody RegisterManagerRequest request) {
-        log.info("POST /api/auth/register/manager - Manager registration request received");
-        UserResponse response = authService.registerManager(request);
+    public ResponseEntity<RegisterResponse> registerManager(@Valid @RequestBody RegisterManagerRequest request) {
+        
+        RegisterResponse response = authService.registerManager(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     
     @PostMapping("/register/technician")
-    public ResponseEntity<UserResponse> registerTechnician(@Valid @RequestBody RegisterTechnicianRequest request) {
-        log.info("POST /api/auth/register/technician - Technician registration request received");
-        UserResponse response = authService.registerTechnician(request);
+    public ResponseEntity<RegisterResponse> registerTechnician(@Valid @RequestBody RegisterTechnicianRequest request) {
+        
+        RegisterResponse response = authService.registerTechnician(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     
     @PostMapping("/register/customer")
-    public ResponseEntity<UserResponse> registerCustomer(@Valid @RequestBody RegisterCustomerRequest request) {
-        log.info("POST /api/auth/register/customer - Customer registration request received");
-        UserResponse response = authService.registerCustomer(request);
+    public ResponseEntity<RegisterResponse> registerCustomer(@Valid @RequestBody RegisterCustomerRequest request) {
+        RegisterResponse response = authService.registerCustomer(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     @GetMapping("/user/{id}")

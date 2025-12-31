@@ -6,9 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Register Admin Request DTO
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
