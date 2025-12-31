@@ -9,9 +9,7 @@ import org.springframework. web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Admin Controller - Manage admin profiles
- */
+
 @RestController
 @RequestMapping("/api/admins")
 @RequiredArgsConstructor

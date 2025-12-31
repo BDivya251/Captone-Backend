@@ -1,6 +1,7 @@
 package com. vehiclemanagement.userservice. controller;
 
 import com.vehiclemanagement.userservice.dto. request.LoginRequest;
+import com.vehiclemanagement.userservice.dto.request.RegisterAdminRequest;
 import com.vehiclemanagement.userservice.dto.request.RegisterCustomerRequest;
 import com.vehiclemanagement.userservice.dto. request.RegisterManagerRequest;
 import com.vehiclemanagement.userservice.dto.request.RegisterTechnicianRequest;
@@ -45,6 +46,14 @@ public class AuthController {
         RegisterResponse response = authService.registerTechnician(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+    
+    @PostMapping("/register/admin")
+    public ResponseEntity<RegisterResponse> registerAdmin(@Valid @RequestBody RegisterAdminRequest request) {
+        
+        RegisterResponse response = authService.registerAdmin(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+    
     
     @PostMapping("/register/customer")
     public ResponseEntity<RegisterResponse> registerCustomer(@Valid @RequestBody RegisterCustomerRequest request) {

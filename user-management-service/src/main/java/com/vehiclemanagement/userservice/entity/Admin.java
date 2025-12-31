@@ -5,9 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Admin Entity - Stores admin profile information
- */
 @Entity
 @Table(name = "admins")
 @Data
