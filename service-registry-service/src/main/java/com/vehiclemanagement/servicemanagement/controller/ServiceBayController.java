@@ -38,24 +38,17 @@ public class ServiceBayController {
 	        List<ServiceBayResponse> bays = serviceBayService.getAllServiceBays();
 	        return ResponseEntity.ok(bays);
 	    }
-	    
-	    
 	    @GetMapping("/available")
 	    public ResponseEntity<List<ServiceBayResponse>> getAvailableServiceBays() {
 	        List<ServiceBayResponse> bays = serviceBayService.getAvailableServiceBays();
 	        return ResponseEntity.ok(bays);
 	    }
-	    
-	   
 	    @DeleteMapping("/{bayId}")
 	    public ResponseEntity<Map<String, String>> deleteServiceBay(@PathVariable Long bayId) {
-	        
 	        serviceBayService.deleteServiceBay(bayId);
-	        
 	        Map<String, String> response = new HashMap<>();
 	        response.put("message", "Service bay deleted successfully");
 	        response.put("bayId", bayId.toString());
-	        
 	        return ResponseEntity.ok(response);
 	    }
 }
