@@ -65,6 +65,14 @@ public class TechnicianService {
         return responseList;
     }
     
+    public Boolean assignedWork(Long technicianId,Boolean workassigned) {
+    	Technician t=technicianRepository.findById(technicianId).orElseThrow(()-> new RuntimeException("id not found"));
+    	
+    	t.setWorkAssigned(workassigned);
+    	technicianRepository.save(t);
+    	return t.getWorkAssigned();
+    }
+    
     public TechnicianStatsResponse getTechnicianStats(Long technicianId) {
         log.info("Fetching stats for technician ID: {}", technicianId);
         
@@ -92,8 +100,9 @@ public class TechnicianService {
                 .userId(technician.getUserId())
                 .name(technician. getName())
                 .skillSet(technician.getSkillSet())
-                .phone(technician. getPhone())
-                
+                .phone(technician.getPhone())
+                .workAssigned(technician.getWorkAssigned())
                 .build();
     }
+    
 }

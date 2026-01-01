@@ -20,4 +20,5 @@ public class ServiceBillResponse {
     private BigDecimal tax;
     private BigDecimal totalAmount;
     private LocalDateTime generatedDate;
+    private Boolean paid;
 }

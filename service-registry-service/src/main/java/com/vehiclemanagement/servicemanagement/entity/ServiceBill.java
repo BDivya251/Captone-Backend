@@ -37,6 +37,7 @@ public class ServiceBill {
     
     @Column(name = "total_amount", precision = 10, scale = 2)
     private BigDecimal totalAmount = BigDecimal.ZERO;
+    private Boolean paid=false;
     
     @Column(name = "generated_date")
     private LocalDateTime generatedDate = LocalDateTime.now();

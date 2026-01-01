@@ -19,7 +19,6 @@ import java.util.Map;
 @RequestMapping("/api/vehicles")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*")
 public class VehicleController {
     
     private final VehicleService vehicleService;

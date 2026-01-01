@@ -34,6 +34,9 @@ public class Technician {
     @Column(length = 20)
     private String phone;
     
+    @Column
+    private Boolean workAssigned=false;
+    
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

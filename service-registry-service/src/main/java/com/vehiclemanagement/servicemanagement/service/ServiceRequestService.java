@@ -199,7 +199,8 @@ public class ServiceRequestService {
         }
         
         ServiceRequest serviceRequest = requestOptional.get();
-        
+        userServiceClient.assignWork(request.getTechnicianId(),true);
+        System.out.println("work assignedd");
         if (serviceRequest.getManagerId() == null) {
             throw new BadRequestException("Manager must be assigned first before assigning technician");
         }
@@ -224,7 +225,7 @@ public class ServiceRequestService {
         serviceRequest.setStatus("ASSIGNED");
         
         ServiceRequest updated = serviceRequestRepository.save(serviceRequest);
-        
+        userServiceClient.assignWork(request.getTechnicianId(),true);
         log.info("Technician and bay assigned successfully");
         
         return mapToResponse(updated);
@@ -250,9 +251,11 @@ public class ServiceRequestService {
         }
         
         serviceRequest.setStatus(newStatus);
-        
+        Long a=serviceRequest.getTechnicianId();
         if ("COMPLETED".equals(newStatus) || "CANCELLED".equals(newStatus)) {
             if (serviceRequest.getBayNumber() != null) {
+            	
+            	userServiceClient.assignWork(a,false);
                 serviceBayService.releaseBay(serviceRequest.getBayNumber());
             }
         }
@@ -261,6 +264,7 @@ public class ServiceRequestService {
             serviceRequest.setCompletedDate(LocalDateTime.now());
             ServiceBill bill=generateBill(serviceRequest);
             try {
+            	userServiceClient.assignWork(a,false);
                 sendCompletionEmailWithQR(serviceRequest, bill);
                 log.info("Email sent");
             } catch (Exception e) {
@@ -384,7 +388,7 @@ public class ServiceRequestService {
             return existingBill.get();
         }
         
-        List<InventoryUsage> usages = inventoryUsageRepository. findByServiceRequestId(serviceRequest.getId());
+        List<InventoryUsage> usages = inventoryUsageRepository.findByServiceRequestId(serviceRequest.getId());
         BigDecimal partsCost = BigDecimal.ZERO;
         
         for (InventoryUsage usage : usages) {
@@ -407,18 +411,13 @@ public class ServiceRequestService {
         bill.setLaborCost(laborCost);
         bill.setPartsCost(partsCost);
         bill.setTax(tax);
+        bill.setPaid(false);
         bill.setTotalAmount(totalAmount);
-        
         ServiceBill savedBill = serviceBillRepository.save(bill);
-        
         serviceRequest.setTotalAmount(totalAmount);
-        serviceRequestRepository.save(serviceRequest);
-        
-        
+        serviceRequestRepository.save(serviceRequest);   
         return savedBill;
     }
-    
-  
     public List<ServiceRequestResponse> getAllServiceRequests() {
         log.info("Fetching all service requests");
         
@@ -577,6 +576,7 @@ public class ServiceRequestService {
                     .laborCost(bill.getLaborCost())
                     . partsCost(bill.getPartsCost())
                     .tax(bill.getTax())
+                    .paid(false)
                     .totalAmount(bill.getTotalAmount())
                     .generatedDate(bill.getGeneratedDate())
                     .build();

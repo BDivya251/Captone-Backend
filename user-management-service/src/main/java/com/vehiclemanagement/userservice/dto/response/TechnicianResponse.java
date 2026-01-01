@@ -17,4 +17,5 @@ public class TechnicianResponse {
     private String name;
     private String skillSet;
     private String phone;
+    private Boolean workAssigned;
 }

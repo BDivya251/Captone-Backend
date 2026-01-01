@@ -26,7 +26,6 @@ import java.util.Map;
 @RequestMapping("/vehicle/service-requests")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*")
 public class ServiceRequestController {
     
     private final ServiceRequestService serviceRequestService;

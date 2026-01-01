@@ -1,20 +1,25 @@
 package com.vehiclemanagement. userservice.controller;
 
-import com.vehiclemanagement.userservice.dto.response.TechnicianResponse;
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.vehiclemanagement. userservice.dto.response.TechnicianResponse;
 import com.vehiclemanagement.userservice.dto.response.TechnicianStatsResponse;
 import com.vehiclemanagement.userservice.service.TechnicianService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework. web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/technicians")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*")
 public class TechnicianController {
     
     private final TechnicianService technicianService;
@@ -39,6 +44,12 @@ public class TechnicianController {
         log.info("GET /api/technicians/{} - Fetch technician by ID", technicianId);
         TechnicianResponse technician = technicianService.getTechnicianById(technicianId);
         return ResponseEntity.ok(technician);
+    }
+    
+    @PutMapping("/{technicianId}/{workassigned}")
+    public ResponseEntity<Boolean> assignWork(@PathVariable Long technicianId,@PathVariable Boolean workassigned){
+    	Boolean a =technicianService.assignedWork(technicianId,workassigned);
+    	return ResponseEntity.ok(a);
     }
     
     @GetMapping("/{technicianId}/assigned-vs-completed")
