@@ -35,10 +35,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java. util.ArrayList;
-import java. util.List;
-import java. util.Optional;
-import java. util.UUID;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -55,6 +58,7 @@ public class ServiceRequestService {
     private final InventoryServiceClient inventoryServiceClient;
     private final ServiceBayService serviceBayService;
     private final QRCodeService qrCodeService;
+    private final PDFService pdfService;
     private final EmailService emailService;
 //Get all assigned tasks for a technician
     public List<ServiceRequestResponse> getAssignedTasksByTechnician(Long technicianId){
@@ -309,9 +313,9 @@ public class ServiceRequestService {
             // Get parts used
             List<InventoryUsage> partsUsed = inventoryUsageRepository.findByServiceRequestId(serviceRequest.getId());
             
-            // Generate QR code
-            String qrCodeBase64 = qrCodeService.generateQRCodeBase64(serviceRequest.getId());
-            String detailsUrl = qrCodeService.getDetailsUrl(serviceRequest.getId());
+            // Generate QR code using bill ID (direct PDF download)
+            String qrCodeBase64 = qrCodeService.generateQRCodeBase64(bill.getId());
+            String detailsUrl = qrCodeService.getDetailsUrl(bill.getId());
             
             // Send email
             emailService.sendServiceCompletionEmail(
@@ -388,42 +392,94 @@ public class ServiceRequestService {
    
     @Transactional
     public ServiceBill generateBill(ServiceRequest serviceRequest) {
-        
         Optional<ServiceBill> existingBill = serviceBillRepository.findByServiceRequestId(serviceRequest.getId());
-        if (existingBill.isPresent()) {
-            
-            return existingBill.get();
-        }
-        
-        List<InventoryUsage> usages = inventoryUsageRepository.findByServiceRequestId(serviceRequest.getId());
-        BigDecimal partsCost = BigDecimal.ZERO;
-        
-        for (InventoryUsage usage : usages) {
-            partsCost = partsCost.add(usage.getTotalPrice());
-        }
-        
-        BigDecimal laborCost = serviceRequest.getLaborCost() != null 
-                ? serviceRequest.getLaborCost() 
-                : new BigDecimal("500.00"); // Default fallback
 
-        
+        List<InventoryUsage> usages = inventoryUsageRepository.findByServiceRequestId(serviceRequest.getId());
+        BigDecimal partsCost = usages.stream()
+                .map(InventoryUsage::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal laborCost = serviceRequest.getLaborCost() != null
+                ? serviceRequest.getLaborCost()
+                : new BigDecimal("500.00");
+
         BigDecimal subtotal = partsCost.add(laborCost);
         BigDecimal tax = subtotal.multiply(new BigDecimal("0.18"));
-        
         BigDecimal totalAmount = subtotal.add(tax);
-        
-        ServiceBill bill = new ServiceBill();
+
+        ServiceBill bill = existingBill.orElseGet(ServiceBill::new);
         bill.setServiceRequest(serviceRequest);
-        bill.setBillNumber("BILL-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
+        bill.setBillNumber(bill.getBillNumber() != null ? bill.getBillNumber()
+                : "BILL-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
         bill.setLaborCost(laborCost);
         bill.setPartsCost(partsCost);
         bill.setTax(tax);
-        bill.setPaid(false);
+        bill.setPaid(Boolean.TRUE.equals(bill.getPaid()));
         bill.setTotalAmount(totalAmount);
+        if (bill.getQrToken() == null || bill.getQrToken().isBlank()) {
+            bill.setQrToken(UUID.randomUUID().toString().replace("-", ""));
+        }
+
+        Map<String, Object> invoiceData = buildInvoiceData(serviceRequest, bill, usages);
+        byte[] pdfBytes = pdfService.generateInvoicePDF(invoiceData);
+        bill.setInvoicePdfBase64(Base64.getEncoder().encodeToString(pdfBytes));
+
         ServiceBill savedBill = serviceBillRepository.save(bill);
         serviceRequest.setTotalAmount(totalAmount);
-        serviceRequestRepository.save(serviceRequest);   
+        serviceRequestRepository.save(serviceRequest);
         return savedBill;
+    }
+
+    private Map<String, Object> buildInvoiceData(ServiceRequest serviceRequest, ServiceBill bill, List<InventoryUsage> usages) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("serviceRequestId", serviceRequest.getId());
+        data.put("requestType", serviceRequest.getRequestType());
+        data.put("status", serviceRequest.getStatus());
+        data.put("bayNumber", serviceRequest.getBayNumber());
+        data.put("laborCost", serviceRequest.getLaborCost());
+        data.put("completedDate", serviceRequest.getCompletedDate());
+
+        Map<String, Object> billMap = new HashMap<>();
+        billMap.put("laborCost", bill.getLaborCost());
+        billMap.put("partsCost", bill.getPartsCost());
+        billMap.put("tax", bill.getTax());
+        billMap.put("totalAmount", bill.getTotalAmount());
+        data.put("bill", billMap);
+
+        List<Map<String, Object>> partsList = new ArrayList<>();
+        for (InventoryUsage usage : usages) {
+            Map<String, Object> partData = new HashMap<>();
+            partData.put("partName", usage.getPartName());
+            partData.put("quantity", usage.getQuantity());
+            partData.put("unitPrice", usage.getUnitPrice());
+            partsList.add(partData);
+        }
+        data.put("partsUsed", partsList);
+
+        return data;
+    }
+
+    public byte[] getStoredInvoicePdf(Long billId) {
+        ServiceBill bill = serviceBillRepository.findById(billId)
+                .orElseThrow(() -> new ResourceNotFoundException("Bill not found with ID: " + billId));
+
+        if (bill.getInvoicePdfBase64() != null && !bill.getInvoicePdfBase64().isBlank()) {
+            return Base64.getDecoder().decode(bill.getInvoicePdfBase64());
+        }
+
+        ServiceRequest serviceRequest = bill.getServiceRequest();
+        List<InventoryUsage> usages = inventoryUsageRepository.findByServiceRequestId(serviceRequest.getId());
+        Map<String, Object> invoiceData = buildInvoiceData(serviceRequest, bill, usages);
+        byte[] pdfBytes = pdfService.generateInvoicePDF(invoiceData);
+        bill.setInvoicePdfBase64(Base64.getEncoder().encodeToString(pdfBytes));
+        serviceBillRepository.save(bill);
+        return pdfBytes;
+    }
+
+    public byte[] getInvoicePdfByServiceRequest(Long serviceRequestId) {
+        ServiceBill bill = serviceBillRepository.findByServiceRequestId(serviceRequestId)
+                .orElseThrow(() -> new ResourceNotFoundException("Bill not found for service request ID: " + serviceRequestId));
+        return getStoredInvoicePdf(bill.getId());
     }
     public List<ServiceRequestResponse> getAllServiceRequests() {
         log.info("Fetching all service requests");

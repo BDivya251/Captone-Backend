@@ -79,8 +79,8 @@ public class EmailService {
             // Parts used
             context.setVariable("partsUsed", partsUsed);
             
-            // QR code and URL
-            context.setVariable("qrCodeBase64", qrCodeBase64);
+            // For email, use CID reference instead of data URI
+            context.setVariable("qrCodeCid", "qrcode");
             context.setVariable("detailsUrl", detailsUrl);
             context.setVariable("companyName", companyName);
             context.setVariable("supportEmail", supportEmail);
@@ -88,6 +88,29 @@ public class EmailService {
             // Generate HTML content
             String htmlContent = templateEngine.process("service-completion-email", context);
             helper.setText(htmlContent, true);
+            
+            // Attach QR code as inline image
+            if (qrCodeBase64 != null && !qrCodeBase64.isEmpty()) {
+                try {
+                    // Remove data URI prefix if present
+                    String base64Data = qrCodeBase64.replaceFirst("^data:image/[^;]+;base64,", "");
+                    byte[] qrCodeBytes = java.util.Base64.getDecoder().decode(base64Data);
+                    
+                    log.info("QR Code bytes length: {}", qrCodeBytes.length);
+                    
+                    // Use ByteArrayResource for inline attachment
+                    org.springframework.core.io.ByteArrayResource qrResource = 
+                            new org.springframework.core.io.ByteArrayResource(qrCodeBytes);
+                    
+                    helper.addInline("qrcode", qrResource, "image/png");
+                    log.info("QR code attached successfully as inline image");
+                    
+                } catch (Exception qrEx) {
+                    log.error("Failed to attach QR code: {}", qrEx.getMessage(), qrEx);
+                }
+            } else {
+                log.warn("QR code Base64 is null or empty");
+            }
             
             // Send email
             mailSender.send(message);

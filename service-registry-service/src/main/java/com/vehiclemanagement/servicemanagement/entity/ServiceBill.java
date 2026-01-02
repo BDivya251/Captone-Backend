@@ -37,6 +37,14 @@ public class ServiceBill {
     
     @Column(name = "total_amount", precision = 10, scale = 2)
     private BigDecimal totalAmount = BigDecimal.ZERO;
+
+    @Lob
+    @Column(name = "invoice_pdf_base64", columnDefinition = "LONGTEXT")
+    private String invoicePdfBase64;
+
+    @Column(name = "qr_token", unique = true, length = 64)
+    private String qrToken;
+
     private Boolean paid=false;
     
     @Column(name = "generated_date")

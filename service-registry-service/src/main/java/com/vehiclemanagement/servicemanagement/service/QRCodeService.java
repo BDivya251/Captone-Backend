@@ -21,10 +21,11 @@ public class QRCodeService {
     @Value("${app.base-url}")
     private String baseUrl;
     
-    public String generateQRCodeBase64(Long serviceRequestId) {
+    public String generateQRCodeBase64(Long billId) {
       
         try {
-            String detailsUrl = getDetailsUrl(serviceRequestId);
+            String detailsUrl = getDetailsUrl(billId);
+            log.info("Generating QR code for URL: {}", detailsUrl);
             
             QRCodeWriter qrCodeWriter = new QRCodeWriter();
             BitMatrix bitMatrix = qrCodeWriter.encode(detailsUrl, BarcodeFormat.QR_CODE, 300, 300);
@@ -32,20 +33,19 @@ public class QRCodeService {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             MatrixToImageWriter.writeToStream(bitMatrix, "PNG", outputStream);
             
-            byte[] qrCodeBytes = outputStream. toByteArray();
+            byte[] qrCodeBytes = outputStream.toByteArray();
             String base64QRCode = Base64.getEncoder().encodeToString(qrCodeBytes);
             
-            log.info("QR code generated successfully");
-//            return base64QRCode;
+            log.info("QR code generated successfully, Base64 length: {}", base64QRCode.length());
             return "data:image/png;base64," + base64QRCode;
-
             
         } catch (WriterException | IOException e) {
+            log.error("Failed to generate QR code", e);
             throw new RuntimeException("Failed to generate QR code", e);
         }
     }
     
-    public String getDetailsUrl(Long serviceRequestId) {
-        return baseUrl + "/vehicle/service-requests/" + serviceRequestId + "/public-details";
+    public String getDetailsUrl(Long billId) {
+        return baseUrl + "/vehicle/bills/" + billId + "/download";
     }
 }

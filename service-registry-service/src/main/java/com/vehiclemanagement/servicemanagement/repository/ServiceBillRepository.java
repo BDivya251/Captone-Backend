@@ -8,4 +8,5 @@ import com.vehiclemanagement.servicemanagement.entity.ServiceBill;
 
 public interface ServiceBillRepository extends JpaRepository<ServiceBill,Long>{
 	Optional<ServiceBill> findByServiceRequestId(Long serviceRequestId);
+	Optional<ServiceBill> findByQrToken(String qrToken);
 }
