@@ -1,5 +1,7 @@
 package com.vehiclemanagement.userservice.dto.request;
 
+import java.io.Serializable;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -10,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegisterCustomerRequest {
+public class RegisterCustomerRequest implements Serializable{
     
     @NotBlank(message = "Email is required")
     @Email(message = "Invalid email format")
