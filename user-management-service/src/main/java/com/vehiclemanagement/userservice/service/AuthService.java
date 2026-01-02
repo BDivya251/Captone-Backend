@@ -28,12 +28,38 @@ public class AuthService {
     private final TechnicianRepository technicianRepository;
     private final CustomerRepository customerRepository;
     private final AdminRepository adminRepository;
+    private final EventPublisher eventPublisher;
     
     @Autowired
     private PasswordEncoder passwordEncoder;
     
     @Autowired
     private JwtUtil jwtUtil;
+    
+//    public RegisterResponse registerCustomer(RegisterRequest request) {
+//        log.info("Registering customer:   {}", request.getEmail());
+//        
+//        // Existing registration logic... 
+//        // Save user, save customer
+//        
+//        // ✅ PUBLISH EVENT TO RABBITMQ
+//        try {
+//            RegisterCustomerRequest event = RegisterCustomerRequest.builder()
+//                    .userId(savedUser.getId())
+//                    . email(savedUser.getEmail())
+//                    .name(savedCustomer.getName())
+//                    . role("CUSTOMER")
+//                    .registrationDate(java.time.LocalDateTime.now().toString())
+//                    .build();
+//            
+//            eventPublisher.publishUserRegistration(event);
+//        } catch (Exception e) {
+//            log.error("Failed to publish registration event: {}", e.getMessage());
+//            // Don't fail registration if event publishing fails
+//        }
+//        
+//        return buildRegisterResponse(savedUser, "CUSTOMER", savedCustomer.getId(), "Customer registered successfully");
+//    }
     
     /**
      * LOGIN - All roles
@@ -244,7 +270,7 @@ public class AuthService {
         customerRepository.save(customer);
         
         log.info("Customer registered successfully: {}", request.getEmail());
-        
+        eventPublisher.publishUserRegistration(customer);
         return RegisterResponse.builder()
                 .userId(savedUser. getId())
                 .email(savedUser.getEmail())
