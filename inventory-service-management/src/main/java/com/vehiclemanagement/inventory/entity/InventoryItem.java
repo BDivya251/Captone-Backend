@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate. annotations.UpdateTimestamp;
 
+import com.vehiclemanagement.inventory.enums.UnitType;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -34,11 +36,11 @@ public class InventoryItem {
     @Column(name = "quantity", nullable = false)
     private Integer quantity = 0;
     
-    @Column(name = "unit_price", nullable = false, precision = 10, scale = 2)
+    @Column(name = "unit_price", nullable = false, precision = 2)
     private BigDecimal unitPrice;
     
-    @Column(length = 20)
-    private String unit; // PIECE, LITER, KG, etc.
+    @Enumerated(EnumType.STRING)
+    private UnitType unit;
     
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

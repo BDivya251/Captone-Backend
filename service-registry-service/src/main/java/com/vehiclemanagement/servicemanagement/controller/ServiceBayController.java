@@ -29,9 +29,9 @@ import lombok.extern.slf4j.Slf4j;
 public class ServiceBayController {
 	private final ServiceBayService serviceBayService;
 	@PostMapping
-	public ResponseEntity<ServiceBayResponse> createServiceBay(@Valid @RequestBody CreateServiceBayRequest request){
+	public ResponseEntity<Void> createServiceBay(@Valid @RequestBody CreateServiceBayRequest request){
 		ServiceBayResponse response=serviceBayService.createServiceBay(request);
-		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	 @GetMapping
 	    public ResponseEntity<List<ServiceBayResponse>> getAllServiceBays() {

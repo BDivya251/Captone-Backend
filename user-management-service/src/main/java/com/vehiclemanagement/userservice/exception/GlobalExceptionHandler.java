@@ -17,9 +17,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleResourceNotFoundException(ResourceNotFoundException ex) {
         Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("timestamp", LocalDateTime.now());
-        errorResponse.put("status", HttpStatus.NOT_FOUND.value());
-        errorResponse.put("error", "Not Found");
+//        errorResponse.put("timestamp", LocalDateTime.now());
+//        errorResponse.put("status", HttpStatus.NOT_FOUND.value());
+//        errorResponse.put("error", "Not Found");
         errorResponse.put("message", ex.getMessage());
         
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
@@ -28,9 +28,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<Map<String, Object>> handleBadRequestException(BadRequestException ex) {
         Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("timestamp", LocalDateTime.now());
-        errorResponse.put("status", HttpStatus.BAD_REQUEST.value());
-        errorResponse.put("error", "Bad Request");
+//        errorResponse.put("timestamp", LocalDateTime.now());
+//        errorResponse.put("status", HttpStatus.BAD_REQUEST.value());
+//        errorResponse.put("error", "Bad Request");
         errorResponse.put("message", ex. getMessage());
         
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
@@ -40,15 +40,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
+//            String fieldName = ((FieldError) error).getField();
+        	String fieldName="error";
             String errorMessage = error. getDefaultMessage();
             errors. put(fieldName, errorMessage);
         });
         
         Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse. put("timestamp", LocalDateTime.now());
-        errorResponse.put("status", HttpStatus.BAD_REQUEST.value());
-        errorResponse.put("error", "Validation Failed");
+//        errorResponse. put("timestamp", LocalDateTime.now());
+//        errorResponse.put("status", HttpStatus.BAD_REQUEST.value());
+//        errorResponse.put("error", "Validation Failed");
         errorResponse.put("errors", errors);
         
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
@@ -57,9 +58,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGlobalException(Exception ex) {
         Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("timestamp", LocalDateTime.now());
-        errorResponse. put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-        errorResponse.put("error", "Internal Server Error");
+//        errorResponse.put("timestamp", LocalDateTime.now());
+//        errorResponse. put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+//        errorResponse.put("error", "Internal Server Error");
         errorResponse.put("message", ex.getMessage());
         
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);

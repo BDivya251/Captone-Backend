@@ -6,6 +6,7 @@ import com.vehiclemanagement.vehicle.dto.request.CreateVehicleRequest;
 import com.vehiclemanagement.vehicle.dto.request.UpdateVehicleRequest;
 import com. vehiclemanagement.vehicle.dto.response.VehicleResponse;
 import com.vehiclemanagement.vehicle.entity.Vehicle;
+import com.vehiclemanagement.vehicle.enums.VehicleStatus;
 import com.vehiclemanagement.vehicle. exception.BadRequestException;
 import com.vehiclemanagement.vehicle. exception.FeignClientException;
 import com. vehiclemanagement.vehicle.exception.ResourceNotFoundException;
@@ -42,6 +43,14 @@ public class VehicleService {
            
             throw new FeignClientException("Unable to validate customer.  User Service may be unavailable.", ex);
         }
+    }
+    
+    @Transactional
+    public VehicleStatus changeStatusOfVehicle(VehicleStatus status,String registrationNumber) {
+    	Vehicle vehicle=vehicleRepository.findByRegistrationNumber(registrationNumber).orElseThrow(()->new BadRequestException("Vehicle Not Found with that registration number"));
+    	vehicle.setStatus(status);
+    	vehicleRepository.save(vehicle);
+    	return vehicle.getStatus();
     }
     
   
@@ -168,7 +177,7 @@ public class VehicleService {
         }
         
         if (request.getModel() != null) {
-            vehicle. setModel(request.getModel());
+            vehicle.setModel(request.getModel());
         }
         
         if (request.getYearOfManufacture() != null) {

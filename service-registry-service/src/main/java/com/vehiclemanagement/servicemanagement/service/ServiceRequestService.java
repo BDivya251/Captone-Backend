@@ -157,6 +157,13 @@ public class ServiceRequestService {
         return imageOptional.get();
     }
     
+    public Boolean payBill(Long billId) {
+    	ServiceBill a=serviceBillRepository.findById(billId).orElseThrow(()->new BadRequestException("not a valid bill number"));
+    	a.setPaid(true);
+    	serviceBillRepository.save(a);
+    	return a.getPaid();
+    }
+    
     /**
      * 4. Assign Manager
      */

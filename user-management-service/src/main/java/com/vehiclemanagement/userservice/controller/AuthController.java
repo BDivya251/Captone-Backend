@@ -42,28 +42,28 @@ public class AuthController {
     public ResponseEntity<RegisterResponse> registerManager(@Valid @RequestBody RegisterManagerRequest request) {
         
         RegisterResponse response = authService.registerManager(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
     
     @PostMapping("/register/technician")
     public ResponseEntity<RegisterResponse> registerTechnician(@Valid @RequestBody RegisterTechnicianRequest request) {
         
         RegisterResponse response = authService.registerTechnician(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
     
     @PostMapping("/register/admin")
-    public ResponseEntity<RegisterResponse> registerAdmin(@Valid @RequestBody RegisterAdminRequest request) {
+    public ResponseEntity<Void> registerAdmin(@Valid @RequestBody RegisterAdminRequest request) {
         
         RegisterResponse response = authService.registerAdmin(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
     
     
     @PostMapping("/register/customer")
-    public ResponseEntity<RegisterResponse> registerCustomer(@Valid @RequestBody RegisterCustomerRequest request) {
+    public ResponseEntity<Void> registerCustomer(@Valid @RequestBody RegisterCustomerRequest request) {
         RegisterResponse response = authService.registerCustomer(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
     @GetMapping("/user/{id}")
     public User getUserDetails(@PathVariable Long id) {

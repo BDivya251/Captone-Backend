@@ -25,11 +25,11 @@ public class InventoryController {
     
     
     @PostMapping
-    public ResponseEntity<InventoryItemResponse> createInventoryItem(
+    public ResponseEntity<Void> createInventoryItem(
             @Valid @RequestBody CreateInventoryItemRequest request) {
        
         InventoryItemResponse response = inventoryService.createInventoryItem(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
     
     
@@ -50,9 +50,9 @@ public class InventoryController {
     
    
     @GetMapping("/low-stock")
-    public ResponseEntity<List<InventoryItemResponse>> getLowStockItems() {
+    public ResponseEntity<List<InventoryItemResponse>> getLowStockItems(@RequestParam Long number) {
        
-        List<InventoryItemResponse> items = inventoryService.getLowStockItems();
+        List<InventoryItemResponse> items = inventoryService.getLowStockItems(number);
         return ResponseEntity.ok(items);
     }
     
@@ -74,14 +74,14 @@ public class InventoryController {
         return ResponseEntity.ok(response);
     }
    
-    @PatchMapping("/{itemId}/quantity")
-    public ResponseEntity<InventoryItemResponse> updateQuantity(
-            @PathVariable Long itemId,
-            @RequestParam Integer change) {
-      
-        InventoryItemResponse response = inventoryService.updateQuantity(itemId, change);
-        return ResponseEntity.ok(response);
-    }
+//    @PatchMapping("/{itemId}/quantity")
+//    public ResponseEntity<InventoryItemResponse> updateQuantity(
+//            @PathVariable Long itemId,
+//            @RequestParam Integer change) {
+//      
+//        InventoryItemResponse response = inventoryService.updateQuantity(itemId, change);
+//        return ResponseEntity.ok(response);
+//    }
     
    
     @DeleteMapping("/{itemId}")

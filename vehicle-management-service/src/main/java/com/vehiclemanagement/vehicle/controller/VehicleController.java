@@ -3,6 +3,8 @@ package com.vehiclemanagement.vehicle. controller;
 import com.vehiclemanagement.vehicle.dto.request.CreateVehicleRequest;
 import com.vehiclemanagement.vehicle.dto. request.UpdateVehicleRequest;
 import com.vehiclemanagement.vehicle.dto.response.VehicleResponse;
+import com.vehiclemanagement.vehicle.entity.Vehicle;
+import com.vehiclemanagement.vehicle.enums.VehicleStatus;
 import com.vehiclemanagement.vehicle.service.VehicleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +27,10 @@ public class VehicleController {
     
     
     @PostMapping
-    public ResponseEntity<VehicleResponse> createVehicle(@Valid @RequestBody CreateVehicleRequest request) {
+    public ResponseEntity<Void> createVehicle(@Valid @RequestBody CreateVehicleRequest request) {
         log.info("POST /api/vehicles - Create vehicle request received");
         VehicleResponse response = vehicleService.createVehicle(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
     
     
@@ -49,7 +51,6 @@ public class VehicleController {
    
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<List<VehicleResponse>> getVehiclesByCustomerId(@PathVariable Long customerId) {
-        log.info("GET /api/vehicles/customer/{} - Fetch vehicles by customer ID", customerId);
         List<VehicleResponse> vehicles = vehicleService.getVehiclesByCustomerId(customerId);
         return ResponseEntity.ok(vehicles);
     }
@@ -66,6 +67,7 @@ public class VehicleController {
     }
     
     
+    
     @DeleteMapping("/{vehicleId}")
     public ResponseEntity<Map<String, String>> deleteVehicle(@PathVariable Long vehicleId) {
         log.info("DELETE /api/vehicles/{} - Delete vehicle request received", vehicleId);
@@ -77,5 +79,11 @@ public class VehicleController {
         response.put("vehicleId", vehicleId.toString());
         
         return ResponseEntity.ok(response);
+    }
+    
+    @PutMapping("/status")
+    public ResponseEntity<VehicleStatus>  UpdateStatusCode(@RequestParam VehicleStatus status,@RequestParam String regsitration){
+    	VehicleStatus a=vehicleService.changeStatusOfVehicle(status,regsitration);
+    	return ResponseEntity.ok(a);
     }
 }

@@ -49,11 +49,11 @@ public class ServiceRequestController {
     }
     
     @PostMapping
-    public ResponseEntity<ServiceRequestResponse> createServiceRequest(
+    public ResponseEntity<Void> createServiceRequest(
             @Valid @RequestBody CreateServiceRequestRequest request) {
         log.info("POST /vehicle/service-requests - Create service request");
         ServiceRequestResponse response = serviceRequestService. createServiceRequest(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
     
     @PostMapping("/{serviceRequestId}/images")
@@ -64,11 +64,11 @@ public class ServiceRequestController {
         
         serviceRequestService.uploadImages(serviceRequestId, images);
         
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Images uploaded successfully");
-        response.put("count", String.valueOf(images.size()));
-        
-        return ResponseEntity.ok(response);
+//        Map<String, String> response = new HashMap<>();
+//        response.put("message", "Images uploaded successfully");
+//        response.put("count", String.valueOf(images.size()));
+//        
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
     
     @GetMapping("/images/{imageId}")
@@ -134,7 +134,11 @@ public class ServiceRequestController {
         
         return ResponseEntity.ok(response);
     }
-    
+    @PostMapping("billStatus")
+    public ResponseEntity<Boolean> payBill(@RequestParam Long billId){
+    	Boolean a=serviceRequestService.payBill(billId);
+    	return ResponseEntity.ok(a);
+    }
     @GetMapping
     public ResponseEntity<List<ServiceRequestResponse>> getAllServiceRequests() {
         log.info("GET /vehicle/service-requests - Fetch all service requests");

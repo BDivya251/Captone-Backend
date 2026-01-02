@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
+import com.vehiclemanagement.inventory.enums.UnitType;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,9 +35,9 @@ public class CreateInventoryItemRequest {
     
     @NotNull(message = "Unit price is required")
     @DecimalMin(value = "0.0", inclusive = false, message = "Unit price must be greater than 0")
+    @Digits(integer = 8, fraction = 2, message = "Unit price must have up to 8 digits and 2 decimal places")
     private BigDecimal unitPrice;
     
-    @NotBlank(message = "Unit is required")
-    @Size(max = 20, message = "Unit must not exceed 20 characters")
-    private String unit;
+    @NotNull(message = "Unit is required")
+    private UnitType unit;
 }

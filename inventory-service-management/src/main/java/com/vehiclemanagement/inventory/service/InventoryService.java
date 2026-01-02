@@ -81,16 +81,14 @@ public class InventoryService {
     }
     
     
-    public List<InventoryItemResponse> getLowStockItems() {
-        log.info("Fetching low stock items (quantity < 10)");
+    public List<InventoryItemResponse> getLowStockItems(Long number) {
+        log.info("Fetching low stock items (quantity < {})",number);
         
-        List<InventoryItem> items = inventoryItemRepository. findLowStockItems();
+        List<InventoryItem> items = inventoryItemRepository.findLowStockItems(number);
         List<InventoryItemResponse> responseList = new ArrayList<>();
-        
         for (InventoryItem item : items) {
             responseList.add(mapToResponse(item));
         }
-        
         log.info("Found {} low stock items", responseList.size());
         return responseList;
     }
@@ -126,7 +124,7 @@ public class InventoryService {
         }
         
         if (request. getUnit() != null) {
-            item.setUnit(request. getUnit());
+            item.setUnit(request.getUnit());
         }
         
         InventoryItem updatedItem = inventoryItemRepository.save(item);

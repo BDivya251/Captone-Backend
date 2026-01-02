@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.vehiclemanagement.inventory.enums.UnitType;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,7 +21,7 @@ public class InventoryItemResponse {
     private String description;
     private Integer quantity;
     private BigDecimal unitPrice;
-    private String unit;
+    private UnitType unit;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

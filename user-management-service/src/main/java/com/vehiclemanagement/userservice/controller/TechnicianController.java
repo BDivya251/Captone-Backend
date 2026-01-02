@@ -52,10 +52,10 @@ public class TechnicianController {
     	return ResponseEntity.ok(a);
     }
     
-    @GetMapping("/{technicianId}/assigned-vs-completed")
-    public ResponseEntity<TechnicianStatsResponse> getTechnicianStats(@PathVariable Long technicianId) {
-        log.info("GET /api/technicians/{}/assigned-vs-completed - Fetch technician stats", technicianId);
-        TechnicianStatsResponse stats = technicianService. getTechnicianStats(technicianId);
-        return ResponseEntity.ok(stats);
-    }
+//    @GetMapping("/{technicianId}/assigned-vs-completed")
+//    public ResponseEntity<TechnicianStatsResponse> getTechnicianStats(@PathVariable Long technicianId) {
+//        log.info("GET /api/technicians/{}/assigned-vs-completed - Fetch technician stats", technicianId);
+//        TechnicianStatsResponse stats = technicianService. getTechnicianStats(technicianId);
+//        return ResponseEntity.ok(stats);
+//    }
 }
