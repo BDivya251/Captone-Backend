@@ -116,7 +116,11 @@ public class RoleAuthorizationFilter implements GlobalFilter, Ordered {
             }
 
             if (path.matches("/user-service/api/customers/user/" + userId)) {
+                log.info("Allowed access to user details for userId: {}", userId);
                 return true;
+            } else {
+                log.info("Denied access to user details. Path: {}, Expected: /user-service/api/customers/user/{}", path,
+                        userId);
             }
 
             if (path.equals("/service-management-service/vehicle/service-requests") && method == HttpMethod.POST) {
