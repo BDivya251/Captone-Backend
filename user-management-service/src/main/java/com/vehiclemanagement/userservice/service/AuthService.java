@@ -270,14 +270,16 @@ public class AuthService {
         customerRepository.save(customer);
         
         log.info("Customer registered successfully: {}", request.getEmail());
-        eventPublisher.publishUserRegistration(customer);
-        return RegisterResponse.builder()
+        
+        RegisterResponse a= RegisterResponse.builder()
                 .userId(savedUser. getId())
                 .email(savedUser.getEmail())
                 .role(savedUser.getRole().name())
                 .status(savedUser.getStatus().name())
                 .message("Customer registered successfully")
                 .build();
+        eventPublisher.publishUserRegistration(a);
+        return a;
     }
 
 	public User getByKey(Long id) {

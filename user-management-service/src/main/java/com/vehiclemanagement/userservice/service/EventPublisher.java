@@ -3,7 +3,7 @@ package com.vehiclemanagement.userservice.service;
 
 import com.vehiclemanagement.userservice.config.RabbitMQConfig;
 import com.vehiclemanagement.userservice.dto.request.RegisterCustomerRequest;
-import com.vehiclemanagement.userservice.entity.Customer;
+import com.vehiclemanagement.userservice.dto.response.RegisterResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +24,9 @@ public class EventPublisher {
     /**
      * Publish user registration event
      */
-    public void publishUserRegistration(Customer event) {
+    public void publishUserRegistration(RegisterResponse event) {
         log.info("📤 Publishing user registration event to RabbitMQ");
-        log.info("User:  {} | Role: {} | Email: {}", event.getName(), "CUSTOMER");
+        log.info("User:  {} | Role: {} | Email: {}", event.getUserId(), "CUSTOMER", event.getEmail());
         
         try {
             rabbitTemplate.convertAndSend(

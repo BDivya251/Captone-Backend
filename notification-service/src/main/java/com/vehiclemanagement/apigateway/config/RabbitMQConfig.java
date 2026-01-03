@@ -1,13 +1,12 @@
 package com.vehiclemanagement.apigateway.config;
 
-
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org. springframework.amqp.support. converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
-import org.springframework.context.annotation. Bean;
-import org.springframework. context.annotation.Configuration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * RabbitMQ Configuration
@@ -15,20 +14,20 @@ import org.springframework. context.annotation.Configuration;
  */
 @Configuration
 public class RabbitMQConfig {
-    
+
     // Queue names
     public static final String USER_REGISTRATION_QUEUE = "user.registration.queue";
-    public static final String BOOKING_CONFIRMATION_QUEUE = "booking. confirmation.queue";
-    public static final String BILL_NOTIFICATION_QUEUE = "bill.notification. queue";
-    
+    public static final String BOOKING_CONFIRMATION_QUEUE = "booking.confirmation.queue";
+    public static final String BILL_NOTIFICATION_QUEUE = "bill.notification.queue";
+
     // Exchange name
     public static final String NOTIFICATION_EXCHANGE = "notification.exchange";
-    
+
     // Routing keys
     public static final String USER_REGISTRATION_KEY = "user.registration";
     public static final String BOOKING_CONFIRMATION_KEY = "booking.confirmation";
     public static final String BILL_NOTIFICATION_KEY = "bill.notification";
-    
+
     /**
      * User Registration Queue
      */
@@ -38,15 +37,15 @@ public class RabbitMQConfig {
                 .withArgument("x-message-ttl", 86400000) // 24 hours TTL
                 .build();
     }
-    
+
     /**
      * Booking Confirmation Queue
      */
     @Bean
     public Queue bookingConfirmationQueue() {
-        return QueueBuilder. durable(BOOKING_CONFIRMATION_QUEUE).build();
+        return QueueBuilder.durable(BOOKING_CONFIRMATION_QUEUE).build();
     }
-    
+
     /**
      * Bill Notification Queue
      */
@@ -54,7 +53,7 @@ public class RabbitMQConfig {
     public Queue billNotificationQueue() {
         return QueueBuilder.durable(BILL_NOTIFICATION_QUEUE).build();
     }
-    
+
     /**
      * Topic Exchange (allows pattern-based routing)
      */
@@ -62,7 +61,7 @@ public class RabbitMQConfig {
     public TopicExchange notificationExchange() {
         return new TopicExchange(NOTIFICATION_EXCHANGE);
     }
-    
+
     /**
      * Bind user registration queue to exchange
      */
@@ -73,7 +72,7 @@ public class RabbitMQConfig {
                 .to(notificationExchange)
                 .with(USER_REGISTRATION_KEY);
     }
-    
+
     /**
      * Bind booking confirmation queue
      */
@@ -84,7 +83,7 @@ public class RabbitMQConfig {
                 .to(notificationExchange)
                 .with(BOOKING_CONFIRMATION_KEY);
     }
-    
+
     /**
      * Bind bill notification queue
      */
@@ -95,7 +94,7 @@ public class RabbitMQConfig {
                 .to(notificationExchange)
                 .with(BILL_NOTIFICATION_KEY);
     }
-    
+
     /**
      * JSON Message Converter (converts Java objects to JSON in RabbitMQ)
      */
@@ -103,7 +102,7 @@ public class RabbitMQConfig {
     public MessageConverter jsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
     }
-    
+
     /**
      * RabbitTemplate with JSON converter
      */
