@@ -222,7 +222,11 @@ public class ServiceRequestController {
         List<ServiceRequestResponse> requests = serviceRequestService.getServiceRequestsByCustomerId(customerId);
         return ResponseEntity.ok(requests);
     }
-
+    @GetMapping("/manager/{managerId}")
+    public ResponseEntity<List<ServiceRequestResponse>> getServiceRequestsByManagerId(@PathVariable Long managerId){
+    	List<ServiceRequestResponse> requests=serviceRequestService.getServiceRequestsByManagerId(managerId);
+    	return ResponseEntity.ok(requests);
+    }
     @GetMapping("/technician/{technicianId}")
     public ResponseEntity<List<ServiceRequestResponse>> getServiceRequestsByTechnicianId(
             @PathVariable Long technicianId) {
