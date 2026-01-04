@@ -40,10 +40,12 @@ public class ServiceRequestController {
 
         ServiceRequestResponse request = serviceRequestService.getServiceRequestById(serviceRequestId);
         String description = request.getDescription();
-
+        String createdDate=request.getRequestDate().toString();
         // ServiceRequestResponse request = requestOpt.get();
         PriorityAnalysisService.PriorityAnalysisResponse analysis = priorityAnalysisService
-                .analyzePriority(description);
+                .analyzePriority(description,createdDate);
+//       String analysis = priorityAnalysisService
+//              .analyzePriority(description,createdDate);
         return ResponseEntity.ok(analysis);
     }
 

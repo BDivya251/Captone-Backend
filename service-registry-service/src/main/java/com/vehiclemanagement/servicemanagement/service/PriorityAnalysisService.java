@@ -1,154 +1,301 @@
+//package com.vehiclemanagement.servicemanagement.service;
+//
+//import lombok.RequiredArgsConstructor;
+//import lombok.extern.slf4j.Slf4j;
+//import org.springframework.beans.factory.annotation.Value;
+//import org.springframework.http.*;
+//import org.springframework.stereotype.Service;
+//import org.springframework.web.client.RestTemplate;
+//
+//import com.google.genai.Client;
+//import com.google.genai.types.GenerateContentResponse;
+//
+//import java.util.*;
+//
+//@Service
+//@Slf4j
+//@RequiredArgsConstructor
+//public class PriorityAnalysisService {
+//
+//    @Value("${gemini.api.key:}")
+//    private String apiKey;
+//
+//    @Value("${gemini.api.enabled:true}")
+//    private boolean apiEnabled;
+//    private final Client client;
+//
+//    private final RestTemplate restTemplate = new RestTemplate();
+//    private static final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+//
+//    public PriorityAnalysisResponse analyzePriority(String description,String date) {
+//
+//        // Try AI if enabled and key is available
+//        if (apiEnabled && apiKey != null && !apiKey.isBlank()) {
+//            try {
+//                log.info("Using Gemini AI for priority analysis");
+//                PriorityAnalysisResponse response = askGemini(description,date);
+////                return parseResponse(response);
+//                return response;
+//            } catch (Exception e) {
+//                log.warn("Gemini AI failed: {}, using keyword analysis", e.getMessage());
+//            }
+//        } else {
+//            log.info("Gemini AI not configured, using keyword analysis");
+//        }
+////        return null;
+//        return fallback(description);
+//    }
+//
+//    public  PriorityAnalysisResponse askGemini(String description,String date) {
+//        // Using a valid model name. 'gemini-2.5-flash' is likely incorrect/future.
+//        // Standard models: gemini-1.5-flash, gemini-1.5-pro, gemini-pro
+//    	String text="""
+//        Analyze the following vehicle service request and determine priority.
+//
+//        Request:
+//        %s
+//
+//        Respond ONLY in this format:
+//        priority: HIGH | MEDIUM | LOW
+//        reason: Short explanation
+//        """+"the description of the problem is "+description+" also the created date and time is "+date+" give the response in json fromat";
+//        GenerateContentResponse response = client.models.generateContent("gemini-2.5-flash", description,
+//                null);
+//        System.out.println(response.text());
+//        PriorityAnalysisResponse a=this.parseResponse(response.text());
+//        System.out.println(a);
+//        return a;
+////        PriorityAnalysisResponse(response.text().priority,)
+////        System.out.println(response.text());
+////        return response.text();
+//    }
+//
+//   
+//
+//    private PriorityAnalysisResponse parseResponse(String aiText) {
+//        String priority = "MEDIUM";
+//        String reason = "No clear reason provided";
+//
+//        if (aiText == null || aiText.isEmpty()) {
+//            return new PriorityAnalysisResponse(priority, reason);
+//        }
+//
+//        String upper = aiText.toUpperCase();
+//
+//        // Detect PRIORITY
+//        if (upper.contains("PRIORITY:")) {
+//            String[] parts = upper.split("PRIORITY:");
+//            if (parts.length > 1) {
+//                String line = parts[1].split("\n")[0].trim();
+//                if (line.contains("HIGH"))
+//                    priority = "HIGH";
+//                else if (line.contains("LOW"))
+//                    priority = "LOW";
+//                else
+//                    priority = "MEDIUM";
+//            }
+//        }
+//
+//        // Detect REASON
+//        if (aiText.contains("REASON:")) {
+//            String[] parts = aiText.split("REASON:");
+//            if (parts.length > 1) {
+//                reason = parts[1].trim();
+//                if (reason.contains("\n")) {
+//                    reason = reason.substring(0, reason.indexOf("\n")).trim();
+//                }
+//            }
+//        }
+//
+//        return new PriorityAnalysisResponse(priority, reason);
+//    }
+//
+//    private String buildPrompt(String description) {
+//        return """
+//                Analyze the following vehicle service request and determine priority.
+//
+//                Request:
+//                %s
+//
+//                Respond ONLY in this format:
+//                PRIORITY: HIGH | MEDIUM | LOW
+//                REASON: Short explanation
+//                """.formatted(description);
+//    }
+//
+//    private PriorityAnalysisResponse fallback(String description) {
+//        String text = description.toLowerCase();
+//
+//        if (text.contains("brake") || text.contains("engine") || text.contains("smoke")
+//                || text.contains("accident") || text.contains("fire")) {
+//            return new PriorityAnalysisResponse("HIGH",
+//                    "Safety-critical issue detected");
+//        }
+//
+//        if (text.contains("service") || text.contains("oil") ||
+//                text.contains("noise") || text.contains("battery")) {
+//            return new PriorityAnalysisResponse("MEDIUM",
+//                    "Routine maintenance or performance issue");
+//        }
+//
+//        return new PriorityAnalysisResponse("LOW",
+//                "Cosmetic or non-urgent issue");
+//    }
+//
+//    public static class PriorityAnalysisResponse {
+//        private String priority;
+//        private String reason;
+//
+//        public PriorityAnalysisResponse(String priority, String reason) {
+//            this.priority = priority;
+//            this.reason = reason;
+//        }
+//
+//        public String getPriority() {
+//            return priority;
+//        }
+//
+//        public String getReason() {
+//            return reason;
+//        }
+//    }
+//}
+
 package com.vehiclemanagement.servicemanagement.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.genai.Client;
+import com.google.genai.types.GenerateContentResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class PriorityAnalysisService {
-
-    @Value("${gemini.api.key:}")
-    private String apiKey;
 
     @Value("${gemini.api.enabled:true}")
     private boolean apiEnabled;
 
-    private final RestTemplate restTemplate = new RestTemplate();
-    private static final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+    private final Client client;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public PriorityAnalysisResponse analyzePriority(String description) {
+    /**
+     * Entry point used by controller / service
+     */
+    public PriorityAnalysisResponse analyzePriority(String description, String date) {
 
-        // Try AI if enabled and key is available
-        if (apiEnabled && apiKey != null && !apiKey.isBlank()) {
+        if (apiEnabled) {
             try {
                 log.info("Using Gemini AI for priority analysis");
-                String response = callGemini(description);
-                return parseResponse(response);
+                return askGemini(description, date);
             } catch (Exception e) {
                 log.warn("Gemini AI failed: {}, using keyword analysis", e.getMessage());
             }
         } else {
-            log.info("Gemini AI not configured, using keyword analysis");
+            log.info("Gemini AI disabled, using keyword analysis");
         }
 
         return fallback(description);
     }
 
-    private String callGemini(String description) {
-        String url = GEMINI_URL + "?key=" + apiKey;
+    /**
+     * Gemini AI call with strict JSON prompt
+     */
+    private PriorityAnalysisResponse askGemini(String description, String date) {
 
-        Map<String, Object> body = new HashMap<>();
-        body.put("contents", List.of(
-                Map.of("parts", List.of(
-                        Map.of("text", buildPrompt(description))))));
+        String prompt = """
+You are a classification system.
 
-        body.put("generationConfig", Map.of(
-                "temperature", 0.3,
-                "topP", 0.8,
-                "topK", 10,
-                "maxOutputTokens", 200));
+Analyze the vehicle service request and decide its priority.Consider date also to avoid those with less priority to wait for long time
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+Rules:
+- Respond ONLY with valid JSON
+- No markdown
+- No explanations
+- No extra text
 
-        ResponseEntity<Map> response = restTemplate.postForEntity(url, request, Map.class);
+Input:
+Description: %s
+CreatedAt: %s
 
-        if (!response.getStatusCode().is2xxSuccessful()) {
-            throw new RuntimeException("Gemini API error: " + response.getStatusCode());
+Output format:
+{
+  "priority": "HIGH | MEDIUM | LOW",
+  "reason": "One short sentence"
+}
+""".formatted(description, date);
+
+        GenerateContentResponse response =
+                client.models.generateContent(
+                        "gemini-2.5-flash",
+                        prompt,
+                        null
+                );
+
+        String aiText = response.text();
+        log.debug("Gemini raw response: {}", aiText);
+
+        try {
+            return objectMapper.readValue(aiText, PriorityAnalysisResponse.class);
+        } catch (Exception e) {
+            log.warn("Failed to parse Gemini JSON, falling back");
+            return fallback(description);
         }
-
-        Map<String, Object> responseBody = response.getBody();
-        List<Map<String, Object>> candidates = (List<Map<String, Object>>) responseBody.get("candidates");
-
-        if (candidates == null || candidates.isEmpty()) {
-            throw new RuntimeException("Empty Gemini response");
-        }
-
-        Map<String, Object> content = (Map<String, Object>) candidates.get(0).get("content");
-        List<Map<String, Object>> parts = (List<Map<String, Object>>) content.get("parts");
-
-        return parts.get(0).get("text").toString();
     }
 
-    private PriorityAnalysisResponse parseResponse(String aiText) {
-        String priority = "MEDIUM";
-        String reason = "No clear reason provided";
-
-        if (aiText == null || aiText.isEmpty()) {
-            return new PriorityAnalysisResponse(priority, reason);
-        }
-
-        String upper = aiText.toUpperCase();
-
-        // Detect PRIORITY
-        if (upper.contains("PRIORITY:")) {
-            String[] parts = upper.split("PRIORITY:");
-            if (parts.length > 1) {
-                String line = parts[1].split("\n")[0].trim();
-                if (line.contains("HIGH"))
-                    priority = "HIGH";
-                else if (line.contains("LOW"))
-                    priority = "LOW";
-                else
-                    priority = "MEDIUM";
-            }
-        }
-
-        // Detect REASON
-        if (aiText.contains("REASON:")) {
-            String[] parts = aiText.split("REASON:");
-            if (parts.length > 1) {
-                reason = parts[1].trim();
-                if (reason.contains("\n")) {
-                    reason = reason.substring(0, reason.indexOf("\n")).trim();
-                }
-            }
-        }
-
-        return new PriorityAnalysisResponse(priority, reason);
-    }
-
-    private String buildPrompt(String description) {
-        return """
-                Analyze the following vehicle service request and determine priority.
-
-                Request:
-                %s
-
-                Respond ONLY in this format:
-                PRIORITY: HIGH | MEDIUM | LOW
-                REASON: Short explanation
-                """.formatted(description);
-    }
-
+    /**
+     * Fallback keyword-based logic (SAFE & DETERMINISTIC)
+     */
     private PriorityAnalysisResponse fallback(String description) {
+
         String text = description.toLowerCase();
 
-        if (text.contains("brake") || text.contains("engine") || text.contains("smoke")
-                || text.contains("accident") || text.contains("fire")) {
-            return new PriorityAnalysisResponse("HIGH",
-                    "Safety-critical issue detected");
+        if (text.contains("brake")
+                || text.contains("engine")
+                || text.contains("smoke")
+                || text.contains("fire")
+                || text.contains("accident")
+                || text.contains("won't start")
+                || text.contains("not starting")) {
+
+            return new PriorityAnalysisResponse(
+                    "HIGH",
+                    "Safety-critical or engine-related issue detected"
+            );
         }
 
-        if (text.contains("service") || text.contains("oil") ||
-                text.contains("noise") || text.contains("battery")) {
-            return new PriorityAnalysisResponse("MEDIUM",
-                    "Routine maintenance or performance issue");
+        if (text.contains("noise")
+                || text.contains("battery")
+                || text.contains("service")
+                || text.contains("oil")
+                || text.contains("vibration")
+                || text.contains("maintenance")) {
+
+            return new PriorityAnalysisResponse(
+                    "MEDIUM",
+                    "Routine maintenance or performance-related issue"
+            );
         }
 
-        return new PriorityAnalysisResponse("LOW",
-                "Cosmetic or non-urgent issue");
+        return new PriorityAnalysisResponse(
+                "LOW",
+                "Non-urgent or cosmetic issue"
+        );
     }
 
+    /**
+     * Response DTO
+     */
     public static class PriorityAnalysisResponse {
+
         private String priority;
         private String reason;
+
+        public PriorityAnalysisResponse() {
+        }
 
         public PriorityAnalysisResponse(String priority, String reason) {
             this.priority = priority;
@@ -162,5 +309,14 @@ public class PriorityAnalysisService {
         public String getReason() {
             return reason;
         }
+
+        public void setPriority(String priority) {
+            this.priority = priority;
+        }
+
+        public void setReason(String reason) {
+            this.reason = reason;
+        }
     }
 }
+
