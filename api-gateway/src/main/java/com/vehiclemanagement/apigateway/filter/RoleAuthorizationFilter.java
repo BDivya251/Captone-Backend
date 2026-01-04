@@ -29,7 +29,7 @@ public class RoleAuthorizationFilter implements GlobalFilter, Ordered {
         String path = request.getPath().toString();
         HttpMethod method = request.getMethod();
 
-        if (isPublicEndpoint(path)) {
+        if (isPublicEndpoint(path) || method == HttpMethod.OPTIONS) {
             return chain.filter(exchange);
         }
 
@@ -163,6 +163,18 @@ public class RoleAuthorizationFilter implements GlobalFilter, Ordered {
             // View images
             if (path.startsWith("/service-management-service/vehicle/service-requests/images/")
                     && method == HttpMethod.GET) {
+                return true;
+            }
+
+            // Download Invoice
+            if (path.matches("/service-management-service/vehicle/service-requests/\\d+/download-invoice")
+                    && method == HttpMethod.GET) {
+                return true;
+            }
+
+            // Pay Bill
+            if (path.matches("/service-management-service/vehicle/service-requests/billStatus")
+                    && method == HttpMethod.POST) {
                 return true;
             }
 

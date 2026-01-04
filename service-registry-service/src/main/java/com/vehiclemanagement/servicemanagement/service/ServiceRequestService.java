@@ -68,7 +68,8 @@ public class ServiceRequestService {
     // Get all assigned tasks for a technician
     public List<ServiceRequestResponse> getAssignedTasksByTechnician(Long technicianId) {
         validateTechnician(technicianId);
-        List<ServiceRequest> requests = serviceRequestRepository.findByTechnicianIdAndStatus(technicianId, "ASSIGNED").orElse(null);
+        List<ServiceRequest> requests = serviceRequestRepository.findByTechnicianIdAndStatus(technicianId, "ASSIGNED")
+                .orElse(null);
         List<ServiceRequestResponse> responseList = new ArrayList<>();
         for (ServiceRequest request : requests) {
             responseList.add(mapToResponse(request));
@@ -91,7 +92,8 @@ public class ServiceRequestService {
     // Get Completed by an technician
     public List<ServiceRequestResponse> getCompletedTasksByTechnician(Long technicianId) {
         validateTechnician(technicianId);
-        List<ServiceRequest> requests = serviceRequestRepository.findByTechnicianIdAndStatus(technicianId, "COMPLETED").orElse(null);
+        List<ServiceRequest> requests = serviceRequestRepository.findByTechnicianIdAndStatus(technicianId, "COMPLETED")
+                .orElse(null);
         List<ServiceRequestResponse> responseList = new ArrayList<>();
         for (ServiceRequest request : requests) {
             responseList.add(mapToResponse(request));
@@ -297,9 +299,14 @@ public class ServiceRequestService {
             try {
                 userServiceClient.assignWork(a, false);
                 sendCompletionEmailWithQR(serviceRequest, bill);
-                log.info("Email sent");
+
+                // Update vehicle status back to ACTIVE
+                VehicleResponse vehicle = vehicleServiceClient.getVehicleById(serviceRequest.getVehicleId());
+                vehicleServiceClient.updateVehicleStatus("ACTIVE", vehicle.getRegistrationNumber());
+
+                log.info("Email sent and vehicle status updated to ACTIVE");
             } catch (Exception e) {
-                log.error("Error sending completion email: {}", e.getMessage(), e);
+                log.error("Error sending completion email or updating vehicle status: {}", e.getMessage(), e);
 
             }
         }
@@ -538,7 +545,7 @@ public class ServiceRequestService {
 
         return responseList;
     }
-    
+
     public List<ServiceRequestResponse> getServiceRequestsByManagerId(Long managerId) {
         log.info("Fetching service requests for manager ID: {}", managerId);
         List<ServiceRequest> requests = serviceRequestRepository.findByManagerId(managerId);
@@ -548,7 +555,6 @@ public class ServiceRequestService {
         }
         return responseList;
     }
-    
 
     public List<ServiceRequestResponse> getServiceRequestsByTechnicianId(Long technicianId) {
         log.info("Fetching service requests for technician ID: {}", technicianId);

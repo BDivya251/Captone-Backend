@@ -84,19 +84,7 @@ public class ServiceRequestController {
     public ResponseEntity<byte[]> downloadInvoice(@PathVariable Long serviceRequestId) {
         log.info("GET /vehicle/service-requests/{}/download-invoice", serviceRequestId);
 
-        ServiceRequestResponse request = serviceRequestService.getServiceRequestById(serviceRequestId);
-
-        Map<String, Object> details = new HashMap<>();
-        details.put("serviceRequestId", request.getId());
-        details.put("requestType", request.getRequestType());
-        details.put("status", request.getStatus());
-        details.put("bayNumber", request.getBayNumber());
-        details.put("laborCost", request.getLaborCost());
-        details.put("completedDate", request.getCompletedDate());
-        details.put("bill", request.getBill());
-        details.put("partsUsed", request.getInventoryUsages());
-
-        byte[] pdfContent = pdfService.generateInvoicePDF(details);
+        byte[] pdfContent = serviceRequestService.getInvoicePdfByServiceRequest(serviceRequestId);
         String filename = "Invoice_SR_" + serviceRequestId + ".pdf";
 
         return ResponseEntity.ok()
@@ -127,11 +115,12 @@ public class ServiceRequestController {
         //
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
-    
+
     @GetMapping("/length")
     public Integer getTotalLength() {
-    	return serviceRequestService.getLengthOfServiceRequests();
+        return serviceRequestService.getLengthOfServiceRequests();
     }
+
     @GetMapping("/images/{imageId}")
     public ResponseEntity<byte[]> getImage(@PathVariable Long imageId) {
         log.info("GET /vehicle/service-requests/images/{} - Fetch image", imageId);
@@ -225,7 +214,7 @@ public class ServiceRequestController {
     @GetMapping("/manager/{managerId}")
     public ResponseEntity<List<ServiceRequestResponse>> getServiceRequestsByManagerId(@PathVariable Long managerId){
     	List<ServiceRequestResponse> requests=serviceRequestService.getServiceRequestsByManagerId(managerId);
-    	return ResponseEntity.ok(requests);
+        return ResponseEntity.ok(requests);
     }
     @GetMapping("/technician/{technicianId}")
     public ResponseEntity<List<ServiceRequestResponse>> getServiceRequestsByTechnicianId(
