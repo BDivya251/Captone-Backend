@@ -110,7 +110,9 @@ public class RoleAuthorizationFilter implements GlobalFilter, Ordered {
         if ("CUSTOMER".equals(role)) {
             Long customerId = parseLong(customerIdStr);
             Long userId = parseLong(userIdStr);
-
+            if (path.matches("/service-management-service/vehicle/service-requests/length")) {
+                return true;
+            }
             if (path.matches("/user-service/api/customers/" + customerId)) {
                 return true;
             }
@@ -134,6 +136,15 @@ public class RoleAuthorizationFilter implements GlobalFilter, Ordered {
             // Manage own vehicles
             if (path.matches("/vehicle-service/api/vehicles(/\\d+)?") &&
                     (method == HttpMethod.POST || method == HttpMethod.PUT || method == HttpMethod.DELETE)) {
+                return true;
+            }
+
+            // Allow status update (used by frontend)
+            if (path.matches("/vehicle-service/api/vehicles/\\d+/status") && method == HttpMethod.PUT) {
+                return true;
+            }
+
+            if (path.matches("/vehicle-service/api/vehicles/status") && method == HttpMethod.PUT) {
                 return true;
             }
 

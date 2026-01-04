@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/vehicle/service-requests")
@@ -126,7 +125,11 @@ public class ServiceRequestController {
         //
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
-
+    
+    @GetMapping("/length")
+    public Integer getTotalLength() {
+    	return serviceRequestService.getLengthOfServiceRequests();
+    }
     @GetMapping("/images/{imageId}")
     public ResponseEntity<byte[]> getImage(@PathVariable Long imageId) {
         log.info("GET /vehicle/service-requests/images/{} - Fetch image", imageId);
