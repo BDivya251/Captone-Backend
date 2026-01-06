@@ -31,7 +31,8 @@
 		<spring-cloud.version>2025.1.0</spring-cloud.version>
 	</properties>
 	<dependencies>
-	
+	<!-- Razorpay Java SDK -->
+
 
   <dependency>
     <groupId>com.google.genai</groupId>
@@ -138,6 +139,11 @@
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+    <groupId>com.razorpay</groupId>
+    <artifactId>razorpay-java</artifactId>
+    <version>1.4.6</version>
+</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

@@ -47,9 +47,7 @@ public class TechnicianService {
         return mapToResponse(technician);
     }
     
-    /**
-     * Get all unassigned technicians (without a manager)
-     */
+    
     public List<TechnicianResponse> getUnassignedTechnicians() {
         log.info("Fetching unassigned technicians");
         

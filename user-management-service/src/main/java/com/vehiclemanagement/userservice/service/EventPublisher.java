@@ -25,18 +25,16 @@ public class EventPublisher {
      * Publish user registration event
      */
     public void publishUserRegistration(RegisterResponse event) {
-        log.info("📤 Publishing user registration event to RabbitMQ");
-        log.info("User:  {} | Role: {} | Email: {}", event.getUserId(), "CUSTOMER", event.getEmail());
-        
+      
         try {
             rabbitTemplate.convertAndSend(
                 RabbitMQConfig.NOTIFICATION_EXCHANGE,
                 RabbitMQConfig. USER_REGISTRATION_KEY,
                 event
             );
-            log.info("✅ User registration event published successfully");
+            log.info("User registration event published successfully");
         } catch (Exception e) {
-            log.error("❌ Failed to publish user registration event:  {}", e.getMessage());
+            log.error(" Failed to publish user registration event:  {}", e.getMessage());
         }
     }
 }

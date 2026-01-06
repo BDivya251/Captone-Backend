@@ -1,0 +1,74 @@
+-- ==========================================
+-- 1. USERS (Admin, Managers, Technicians, Customers)
+-- ==========================================
+-- Passwords should be hashed in a real system. Updating createdAt to simulate older users.
+
+INSERT INTO users (email, password, role, status, created_at, updated_at) VALUES
+('manager1@example.com', '$2a$10$ExampleHashForPassword123', 'MANAGER', 'ACTIVE', '2023-01-15 10:00:00', NOW()), -- ID 1
+('manager2@example.com', '$2a$10$ExampleHashForPassword123', 'MANAGER', 'ACTIVE', '2023-02-20 11:30:00', NOW()), -- ID 2
+('tech1@example.com', '$2a$10$ExampleHashForPassword123', 'TECHNICIAN', 'ACTIVE', '2023-01-20 09:00:00', NOW()), -- ID 3
+('tech2@example.com', '$2a$10$ExampleHashForPassword123', 'TECHNICIAN', 'ACTIVE', '2023-03-10 14:15:00', NOW()), -- ID 4
+('tech3@example.com', '$2a$10$ExampleHashForPassword123', 'TECHNICIAN', 'ACTIVE', '2023-05-05 08:30:00', NOW()), -- ID 5
+('cust1@example.com', '$2a$10$ExampleHashForPassword123', 'CUSTOMER', 'ACTIVE', '2023-01-10 12:00:00', NOW()), -- ID 6
+('cust2@example.com', '$2a$10$ExampleHashForPassword123', 'CUSTOMER', 'ACTIVE', '2023-04-12 16:45:00', NOW()), -- ID 7
+('cust3@example.com', '$2a$10$ExampleHashForPassword123', 'CUSTOMER', 'ACTIVE', '2023-06-25 10:20:00', NOW()); -- ID 8
+
+-- ==========================================
+-- 2. MANAGERS
+-- ==========================================
+INSERT INTO managers (user_id, name, phone, created_at) VALUES
+(1, 'Alice Manager', '555-0101', '2023-01-15 10:00:00'), -- ID 1
+(2, 'Bob Supervisor', '555-0102', '2023-02-20 11:30:00'); -- ID 2
+
+-- ==========================================
+-- 3. TECHNICIANS
+-- ==========================================
+INSERT INTO technicians (user_id, manager_id, name, skill_set, phone, work_assigned, created_at) VALUES
+(3, 1, 'Charlie Tech', 'Engine, Oil Change', '555-0201', false, '2023-01-20 09:00:00'), -- ID 1
+(4, 1, 'David Mechanic', 'Brakes, Tires', '555-0202', true, '2023-03-10 14:15:00'), -- ID 2
+(5, 2, 'Eve Electrician', 'Electrical, AC', '555-0203', false, '2023-05-05 08:30:00'); -- ID 3
+
+-- ==========================================
+-- 4. CUSTOMERS
+-- ==========================================
+INSERT INTO customers (user_id, name, phone, created_at) VALUES
+(6, 'Frank Customer', '555-0301', '2023-01-10 12:00:00'), -- ID 1
+(7, 'Grace Client', '555-0302', '2023-04-12 16:45:00'), -- ID 2
+(8, 'Heidi User', '555-0303', '2023-06-25 10:20:00'); -- ID 3
+
+-- ==========================================
+-- 5. VEHICLES
+-- ==========================================
+INSERT INTO vehicles (customer_id, registration_number, make, model, year_of_manufacture, color, vin_number, status, created_at, updated_at) VALUES
+(1, 'MH12AB1234', 'Toyota', 'Camry', 2020, 'White', 'VIN12345678901', 'ACTIVE', '2023-01-12 10:00:00', NOW()), -- ID 1
+(1, 'MH12AB5678', 'Honda', 'Civic', 2018, 'Black', 'VIN12345678902', 'IN_SERVICE', '2023-02-15 11:00:00', NOW()), -- ID 2
+(2, 'KA05XY9876', 'Ford', 'Mustang', 2022, 'Red', 'VIN12345678903', 'ACTIVE', '2023-04-15 09:30:00', NOW()), -- ID 3
+(3, 'TN01ZZ1111', 'Hyundai', 'Creta', 2019, 'Silver', 'VIN12345678904', 'IN_SERVICE', '2023-06-26 14:00:00', NOW()); -- ID 4
+
+-- ==========================================
+-- 6. SERVICE REQUESTS (Historical Data for Revenue)
+-- ==========================================
+
+-- Past Month 1: Jan 2024
+INSERT INTO service_requests (customer_id, vehicle_id, request_type, description, status, manager_id, technician_id, bay_number, is_bay_allocated, labor_cost, total_amount, request_date, completed_date) VALUES
+(1, 1, 'Maintenance', 'Annual Service', 'COMPLETED', 1, 1, 'Bay-1', false, 500.00, 708.00, '2024-01-10 09:00:00', '2024-01-12 17:00:00'), -- $708
+(2, 3, 'Repair', 'Brake Pads', 'COMPLETED', 1, 2, 'Bay-2', false, 300.00, 472.00, '2024-01-15 10:30:00', '2024-01-16 11:00:00'); -- $472
+
+-- Past Month 2: Feb 2024
+INSERT INTO service_requests (customer_id, vehicle_id, request_type, description, status, manager_id, technician_id, bay_number, is_bay_allocated, labor_cost, total_amount, request_date, completed_date) VALUES
+(3, 4, 'Repair', 'AC Fix', 'COMPLETED', 2, 3, 'Bay-1', false, 1200.00, 1652.00, '2024-02-05 08:00:00', '2024-02-07 14:00:00'), -- $1652
+(1, 1, 'Inspection', 'Pre-trip check', 'COMPLETED', 1, 1, 'Bay-3', false, 200.00, 236.00, '2024-02-20 09:00:00', '2024-02-20 16:00:00'); -- $236
+
+-- Past Month 3: Mar 2024
+INSERT INTO service_requests (customer_id, vehicle_id, request_type, description, status, manager_id, technician_id, bay_number, is_bay_allocated, labor_cost, total_amount, request_date, completed_date) VALUES
+(2, 3, 'Maintenance', 'Oil Change', 'COMPLETED', 1, 2, 'Bay-2', false, 400.00, 472.00, '2024-03-10 11:00:00', '2024-03-10 15:00:00'); -- $472
+
+-- Current Month: In Progress / Assigned / Pending
+INSERT INTO service_requests (customer_id, vehicle_id, request_type, description, status, manager_id, technician_id, bay_number, is_bay_allocated, labor_cost, request_date) VALUES
+(1, 2, 'Repair', 'Engine Noise', 'IN_PROGRESS', 1, 1, 'Bay-4', true, 1500.00, NOW() - INTERVAL 2 DAY),
+(3, 4, 'Maintenance', 'Filter Replacement', 'ASSIGNED', 2, 3, 'Bay-1', true, 300.00, NOW() - INTERVAL 1 DAY),
+(2, 3, 'Inspection', 'Tire Rotation', 'PENDING', NULL, NULL, NULL, false, NULL, NOW());
+
+-- Add bills specifically to ensure paid status logic works for reports if queried by bill
+-- Assuming bills are auto-generated by the logic, but for direct SQL we might skip them or add simplistic ones.
+-- The ServiceRequest table has total_amount which is often used for quick revenue stats.

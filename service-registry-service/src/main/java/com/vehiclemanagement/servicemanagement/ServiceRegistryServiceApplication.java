@@ -17,13 +17,11 @@ public class ServiceRegistryServiceApplication {
 
 	private static void loadEnvVariables() {
 		try {
-			// Load .env from backend root (parent directory)
 			io.github.cdimascio.dotenv.Dotenv dotenv = io.github.cdimascio.dotenv.Dotenv.configure()
 					.directory("../")
 					.ignoreIfMissing()
 					.load();
 
-			// Set environment variables and map GEMINI_API_KEY to Spring property name
 			dotenv.entries().forEach(entry -> {
 				System.setProperty(entry.getKey(), entry.getValue());
 				if ("GEMINI_API_KEY".equalsIgnoreCase(entry.getKey())) {

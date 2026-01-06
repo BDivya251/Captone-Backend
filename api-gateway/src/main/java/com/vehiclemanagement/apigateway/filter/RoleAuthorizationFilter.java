@@ -178,6 +178,17 @@ public class RoleAuthorizationFilter implements GlobalFilter, Ordered {
                 return true;
             }
 
+            // Allow status update for Service Requests (e.g. Cancel)
+            if (path.matches("/service-management-service/vehicle/service-requests/\\d+/status")
+                    && method == HttpMethod.PATCH) {
+                return true;
+            }
+
+            // Payment Endpoints
+            if (path.matches("/service-management-service/vehicle/payments/.*")) {
+                return true;
+            }
+
             return false;
         }
 

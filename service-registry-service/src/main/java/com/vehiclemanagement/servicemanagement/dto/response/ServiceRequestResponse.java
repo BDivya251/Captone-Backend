@@ -32,4 +32,5 @@ public class ServiceRequestResponse {
     private BigDecimal laborCost;
     private List<InventoryUsageResponse> inventoryUsages;
     private ServiceBillResponse bill;
+  
 }

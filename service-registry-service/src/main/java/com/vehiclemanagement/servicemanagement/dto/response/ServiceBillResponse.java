@@ -21,4 +21,6 @@ public class ServiceBillResponse {
     private BigDecimal totalAmount;
     private LocalDateTime generatedDate;
     private Boolean paid;
+    private String razorpayPaymentId;
+    private LocalDateTime paymentDate;
 }

@@ -57,7 +57,7 @@ public class ServiceRequestService {
     private final VehicleServiceClient vehicleServiceClient;
     private final InventoryServiceClient inventoryServiceClient;
     private final ServiceBayService serviceBayService;
-    private final QRCodeService qrCodeService;
+    // private final QRCodeService qrCodeService; // REMOVED
     private final PDFService pdfService;
     private final EmailService emailService;
 
@@ -168,6 +168,10 @@ public class ServiceRequestService {
         }
 
         return imageOptional.get();
+    }
+
+    public List<ServiceRequest> getServiceRequestByVehicleid(Long vehicleId) {
+        return serviceRequestRepository.findByVehicleId(vehicleId);
     }
 
     public Boolean payBill(Long billId) {
@@ -342,9 +346,7 @@ public class ServiceRequestService {
             // Get parts used
             List<InventoryUsage> partsUsed = inventoryUsageRepository.findByServiceRequestId(serviceRequest.getId());
 
-            // Generate QR code using bill ID (direct PDF download)
-            String qrCodeBase64 = qrCodeService.generateQRCodeBase64(bill.getId());
-            String detailsUrl = qrCodeService.getDetailsUrl(bill.getId());
+            // QR Code generation removed
 
             // Send email
             emailService.sendServiceCompletionEmail(
@@ -354,9 +356,7 @@ public class ServiceRequestService {
                     bill,
                     vehicleInfo,
                     technicianName,
-                    partsUsed,
-                    qrCodeBase64,
-                    detailsUrl);
+                    partsUsed);
 
             log.info("Completion email sent successfully to: {}", user.getEmail());
 
@@ -438,12 +438,10 @@ public class ServiceRequestService {
                 : "BILL-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
         bill.setLaborCost(laborCost);
         bill.setPartsCost(partsCost);
-        bill.setTax(tax);
         bill.setPaid(Boolean.TRUE.equals(bill.getPaid()));
         bill.setTotalAmount(totalAmount);
-        if (bill.getQrToken() == null || bill.getQrToken().isBlank()) {
-            bill.setQrToken(UUID.randomUUID().toString().replace("-", ""));
-        }
+
+        // QR Token logic removed
 
         Map<String, Object> invoiceData = buildInvoiceData(serviceRequest, bill, usages);
         byte[] pdfBytes = pdfService.generateInvoicePDF(invoiceData);
@@ -672,7 +670,9 @@ public class ServiceRequestService {
                     .laborCost(bill.getLaborCost())
                     .partsCost(bill.getPartsCost())
                     .tax(bill.getTax())
-                    .paid(false)
+                    .paid(bill.getPaid())
+                    .razorpayPaymentId(bill.getRazorpayPaymentId())
+                    .paymentDate(bill.getPaymentDate())
                     .totalAmount(bill.getTotalAmount())
                     .generatedDate(bill.getGeneratedDate())
                     .build();

@@ -6,6 +6,7 @@ import com.vehiclemanagement.servicemanagement.dto.request.AssignTechnicianReque
 import com.vehiclemanagement.servicemanagement.dto.request.CreateServiceRequestRequest;
 import com.vehiclemanagement.servicemanagement.dto.response.ServiceRequestResponse;
 import com.vehiclemanagement.servicemanagement.entity.ServiceImage;
+import com.vehiclemanagement.servicemanagement.entity.ServiceRequest;
 import com.vehiclemanagement.servicemanagement.service.PDFService;
 import com.vehiclemanagement.servicemanagement.service.PriorityAnalysisService;
 import com.vehiclemanagement.servicemanagement.service.ServiceRequestService;
@@ -30,7 +31,6 @@ import java.util.Map;
 @Slf4j
 public class ServiceRequestController {
     private final PriorityAnalysisService priorityAnalysisService;
-    private final PDFService pdfService;
     private final ServiceRequestService serviceRequestService;
     // public endpoint
 
@@ -40,12 +40,12 @@ public class ServiceRequestController {
 
         ServiceRequestResponse request = serviceRequestService.getServiceRequestById(serviceRequestId);
         String description = request.getDescription();
-        String createdDate=request.getRequestDate().toString();
+        String createdDate = request.getRequestDate().toString();
         // ServiceRequestResponse request = requestOpt.get();
         PriorityAnalysisService.PriorityAnalysisResponse analysis = priorityAnalysisService
-                .analyzePriority(description,createdDate);
-//       String analysis = priorityAnalysisService
-//              .analyzePriority(description,createdDate);
+                .analyzePriority(description, createdDate);
+        // String analysis = priorityAnalysisService
+        // .analyzePriority(description,createdDate);
         return ResponseEntity.ok(analysis);
     }
 
@@ -97,7 +97,7 @@ public class ServiceRequestController {
     public ResponseEntity<Void> createServiceRequest(
             @Valid @RequestBody CreateServiceRequestRequest request) {
         log.info("POST /vehicle/service-requests - Create service request");
-        ServiceRequestResponse response = serviceRequestService.createServiceRequest(request);
+        serviceRequestService.createServiceRequest(request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -190,7 +190,12 @@ public class ServiceRequestController {
         Boolean a = serviceRequestService.payBill(billId);
         return ResponseEntity.ok(a);
     }
-
+    
+    @GetMapping("/{vehicleId}")
+    public ResponseEntity<List<ServiceRequest>> getAllServiceRequestsByVehicle(@PathVariable Long vehicleId){
+    	List<ServiceRequest> res= serviceRequestService.getServiceRequestByVehicleid(vehicleId);
+    	return ResponseEntity.ok(res);
+    }
     @GetMapping
     public ResponseEntity<List<ServiceRequestResponse>> getAllServiceRequests() {
         log.info("GET /vehicle/service-requests - Fetch all service requests");
@@ -211,11 +216,13 @@ public class ServiceRequestController {
         List<ServiceRequestResponse> requests = serviceRequestService.getServiceRequestsByCustomerId(customerId);
         return ResponseEntity.ok(requests);
     }
+
     @GetMapping("/manager/{managerId}")
-    public ResponseEntity<List<ServiceRequestResponse>> getServiceRequestsByManagerId(@PathVariable Long managerId){
-    	List<ServiceRequestResponse> requests=serviceRequestService.getServiceRequestsByManagerId(managerId);
+    public ResponseEntity<List<ServiceRequestResponse>> getServiceRequestsByManagerId(@PathVariable Long managerId) {
+        List<ServiceRequestResponse> requests = serviceRequestService.getServiceRequestsByManagerId(managerId);
         return ResponseEntity.ok(requests);
     }
+
     @GetMapping("/technician/{technicianId}")
     public ResponseEntity<List<ServiceRequestResponse>> getServiceRequestsByTechnicianId(
             @PathVariable Long technicianId) {

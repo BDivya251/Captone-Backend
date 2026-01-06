@@ -92,7 +92,7 @@ public class EmailService {
             case "ADMIN":
                 return String.format(
                         "Dear %s,\n\n" +
-                                "🎉 Congratulations! Your Administrator account has been successfully created.\n\n" +
+                                " Congratulations! Your Administrator account has been successfully created.\n\n" +
                                 "ACCOUNT DETAILS:\n" +
                                 "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
                                 "User ID:          %d\n" +
@@ -102,11 +102,11 @@ public class EmailService {
                                 "Status:          Active\n" +
                                 "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n" +
                                 "ADMIN CAPABILITIES:\n" +
-                                "✅ Manage all system users (Activate/Deactivate)\n" +
-                                "✅ View and assign service requests\n" +
-                                "✅ Access complete system analytics\n" +
-                                "✅ Manage inventory and service bays\n" +
-                                "✅ Generate comprehensive reports\n\n" +
+                                " Manage all system users (Activate/Deactivate)\n" +
+                                " View and assign service requests\n" +
+                                " Access complete system analytics\n" +
+                                " Manage inventory and service bays\n" +
+                                " Generate comprehensive reports\n\n" +
                                 "NEXT STEPS:\n" +
                                 "1. Log in to your admin dashboard\n" +
                                 "2. Review pending manager activations\n" +
@@ -123,7 +123,7 @@ public class EmailService {
             case "MANAGER":
                 return String.format(
                         "Dear %s,\n\n" +
-                                "🎉 Welcome aboard! Your Manager account has been successfully created.\n\n" +
+                                "Welcome aboard! Your Manager account has been successfully created.\n\n" +
                                 "ACCOUNT DETAILS:\n" +
                                 "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
                                 "User ID:         %d\n" +
@@ -135,11 +135,11 @@ public class EmailService {
                                 "⚠️ IMPORTANT:  Your account is currently pending activation by an administrator.\n" +
                                 "You will receive another email once your account is activated.\n\n" +
                                 "MANAGER RESPONSIBILITIES:\n" +
-                                "✅ Assign technicians to service requests\n" +
-                                "✅ Monitor service progress\n" +
-                                "✅ Manage team workload\n" +
-                                "✅ Approve service completions\n" +
-                                "✅ Generate team reports\n\n" +
+                                "Assign technicians to service requests\n" +
+                                " Monitor service progress\n" +
+                                " Manage team workload\n" +
+                                " Approve service completions\n" +
+                                " Generate team reports\n\n" +
                                 "WHAT'S NEXT:\n" +
                                 "• Wait for admin approval (usually within 24 hours)\n" +
                                 "• Check your email for activation confirmation\n" +
@@ -155,7 +155,7 @@ public class EmailService {
             case "TECHNICIAN":
                 return String.format(
                         "Dear %s,\n\n" +
-                                "🔧 Welcome to the team! Your Technician account has been successfully created.\n\n" +
+                                " Welcome to the team! Your Technician account has been successfully created.\n\n" +
                                 "ACCOUNT DETAILS:\n" +
                                 "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
                                 "User ID:         %d\n" +
@@ -164,14 +164,14 @@ public class EmailService {
                                 "Registration:    %s\n" +
                                 "Status:          Pending Admin Approval\n" +
                                 "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                                "⚠️ IMPORTANT: Your account is currently pending activation by an administrator.\n" +
+                                " IMPORTANT: Your account is currently pending activation by an administrator.\n" +
                                 "You will receive another email once your account is activated.\n\n" +
                                 "TECHNICIAN RESPONSIBILITIES:\n" +
-                                "✅ Work on assigned service requests\n" +
-                                "✅ Update service progress in real-time\n" +
-                                "✅ Request and track inventory parts\n" +
-                                "✅ Complete service work orders\n" +
-                                "✅ Communicate with managers and customers\n\n" +
+                                " Work on assigned service requests\n" +
+                                " Update service progress in real-time\n" +
+                                " Request and track inventory parts\n" +
+                                " Complete service work orders\n" +
+                                " Communicate with managers and customers\n\n" +
                                 "WHAT'S NEXT:\n" +
                                 "• Wait for admin approval (usually within 24 hours)\n" +
                                 "• Check your email for activation confirmation\n" +
@@ -187,7 +187,7 @@ public class EmailService {
             case "CUSTOMER":
                 return String.format(
                         "Dear %s,\n\n" +
-                                "🚗 Welcome to Vehicle Service Center! Your account has been successfully created.\n\n"
+                                "Welcome to Vehicle Service Center! Your account has been successfully created.\n\n"
                                 +
                                 "ACCOUNT DETAILS:\n" +
                                 "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
@@ -197,14 +197,14 @@ public class EmailService {
                                 "Registration:    %s\n" +
                                 "Status:          Active\n" +
                                 "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                                "✅ Your account is now active!  You can start using our services immediately.\n\n" +
+                                " Your account is now active!  You can start using our services immediately.\n\n" +
                                 "WHAT YOU CAN DO:\n" +
-                                "✅ Register your vehicles\n" +
-                                "✅ Create service requests with photos\n" +
-                                "✅ Track service progress in real-time\n" +
-                                "✅ View service history\n" +
-                                "✅ Download bills and invoices\n" +
-                                "✅ Manage your vehicle fleet\n\n" +
+                                " Register your vehicles\n" +
+                                " Create service requests with photos\n" +
+                                " Track service progress in real-time\n" +
+                                " View service history\n" +
+                                " Download bills and invoices\n" +
+                                " Manage your vehicle fleet\n\n" +
                                 "GET STARTED:\n" +
                                 "1. Log in to your customer dashboard\n" +
                                 "2. Add your vehicle details\n" +
