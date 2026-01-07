@@ -17,10 +17,27 @@ pipeline {
             }
         }
 
-        stage('Build & Test') {
+        stage('Start Infrastructure') {
             steps {
-                // 'package' will run unit tests and generate coverage reports (if configured in pom)
-                bat 'mvn clean package'
+                // specific container names from your docker-compose.yml
+                bat 'docker-compose up -d mysql-db rabbitmq' 
+                // Wait for DB to be ready
+                sleep time: 40, unit: 'SECONDS'
+            }
+        }
+
+        stage('Build Infra (Skip Tests)') {
+            steps {
+                // Build infrastructure services without running their tests
+                bat 'mvn package -pl eureka-server,config-server,api-gateway -DskipTests'
+            }
+        }
+
+        stage('Build Business Services (With Tests)') {
+            steps {
+                // Build business services with tests enabled, injecting DB, Env, Mail, and App properties
+                // We define the list of modules explicitly
+                bat 'mvn package -pl user-management-service,vehicle-management-service,inventory-service-management1,service-registry-service,notification-service -Dspring.cloud.config.enabled=false -Dspring.datasource.url=jdbc:mysql://localhost:3307/vehicle_service_db?createDatabaseIfNotExist=true -Dspring.datasource.username=root -Dspring.datasource.password=divya -Deureka.client.register-with-eureka=false -Deureka.client.fetch-registry=false -Dspring.mail.host=localhost -Dspring.mail.username=test -Dspring.mail.password=test -Dspring.mail.port=1025 -Dapp.company-name="Mobility Technologies" -Dapp.support-email="support@example.com" -Dapp.contact-number="+1234567890"'
             }
         }
 
