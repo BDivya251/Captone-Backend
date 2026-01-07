@@ -2,61 +2,43 @@ pipeline {
     agent any
 
     tools {
-        maven 'maven'
+        maven 'M3'
+    }
+
+    environment {
+        // credentialId matches what you configured in Jenkins (sonar-token1)
+        SONAR_TOKEN = credentials('sonar-token1')
     }
 
     stages {
-
-        stage('Clone Repository') {
+        stage('Checkout') {
             steps {
-                // Update URL if different
-                git branch: 'main',
-                    url: 'https://github.com/BDivya251/Captone-Backend.git'
+                git branch: 'main', url: 'https://github.com/BDivya251/Captone-Backend.git'
             }
         }
 
-        stage('Build & Coverage') {
+        stage('Build & Test') {
             steps {
-                // Run verify to execute tests and generate JaCoCo coverage reports
-                // Coverage settings (includes/excludes) are defined in the root pom.xml
-                bat 'mvn clean verify'
+                // 'package' will run unit tests and generate coverage reports (if configured in pom)
+                bat 'mvn clean package'
             }
         }
 
-        stage('SonarQube Analysis') {
+        stage('SonarCloud Analysis') {
             steps {
-                // Requires 'sonar-token' to be configured in Jenkins Credentials
-                withCredentials([string(credentialsId: 'sonar-token1', variable: 'SONAR_TOKEN')]) {
-                    script {
-                        if (isUnix()) {
-                            sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.token=$SONAR_TOKEN'
-                        } else {
-                            // Windows batch syntax for variables
-                            bat 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.token=%SONAR_TOKEN%'
-                        }
-                    }
-                }
+                // Using specific plugin version as requested
+                bat 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.10.0.2594:sonar -Dsonar.token=%SONAR_TOKEN% -Dsonar.projectVersion=1.0.%BUILD_NUMBER%'
             }
         }
 
-        stage('Docker Build Images') {
+        stage('Docker Compose Build') {
             steps {
-                // Building images using docker build command
-                bat 'docker build -t eureka-server ./eureka-server'
-                bat 'docker build -t config-server ./config-server'
-                bat 'docker build -t api-gateway ./api-gateway'
-                bat 'docker build -t user-service ./user-management-service'
-                bat 'docker build -t vehicle-service ./vehicle-management-service'
-                bat 'docker build -t service-registry ./service-registry-service'
-                bat 'docker build -t inventory-service ./inventory-service-management1'
-                bat 'docker build -t notification-service ./notification-service'
+                bat 'docker-compose build'
             }
         }
-        
-        stage('Docker Compose Deploy') {
+
+        stage('Docker Compose Up') {
             steps {
-                // Optional: Deploy using Compose if needed
-                bat 'docker-compose down'
                 bat 'docker-compose up -d'
             }
         }
@@ -64,10 +46,10 @@ pipeline {
 
     post {
         success {
-            echo 'All services built and Docker images created successfully!'
+            echo 'Pipeline completed successfully!'
         }
         failure {
-            echo 'Build failed. Please check the logs.'
+            echo 'Pipeline failed.'
         }
     }
 }
