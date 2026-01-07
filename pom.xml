@@ -22,9 +22,9 @@
         <jacoco.version>0.8.11</jacoco.version>
         
         <!-- SonarCloud Configuration -->
-        <sonar.organization>bdivya-251</sonar.organization> 
+        <sonar.organization>bdivya251</sonar.organization>  
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.projectKey>bdivya-251_vehicle-service-management-system</sonar.projectKey>
+        <sonar.projectKey>BDivya251_Captone-Backend</sonar.projectKey>
         <sonar.projectName>Vehicle Service Management System</sonar.projectName>
         <sonar.java.source>${java.version}</sonar.java.source>
         
