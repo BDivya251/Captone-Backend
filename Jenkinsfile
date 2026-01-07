@@ -28,10 +28,10 @@ pipeline {
                 withCredentials([string(credentialsId: 'sonar-token1', variable: 'SONAR_TOKEN')]) {
                     script {
                         if (isUnix()) {
-                            sh 'mvn sonar:sonar -Dsonar.token=$SONAR_TOKEN'
+                            sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.token=$SONAR_TOKEN'
                         } else {
                             // Windows batch syntax for variables
-                            bat 'mvn sonar:sonar -Dsonar.token=%SONAR_TOKEN%'
+                            bat 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.token=%SONAR_TOKEN%'
                         }
                     }
                 }
