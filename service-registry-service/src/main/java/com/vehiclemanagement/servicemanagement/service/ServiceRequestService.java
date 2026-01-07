@@ -443,9 +443,9 @@ public class ServiceRequestService {
 
         // QR Token logic removed
 
-        Map<String, Object> invoiceData = buildInvoiceData(serviceRequest, bill, usages);
-        byte[] pdfBytes = pdfService.generateInvoicePDF(invoiceData);
-        bill.setInvoicePdfBase64(Base64.getEncoder().encodeToString(pdfBytes));
+//        Map<String, Object> invoiceData = buildInvoiceData(serviceRequest, bill, usages);
+//        byte[] pdfBytes = pdfService.generateInvoicePDF(invoiceData);
+//        bill.setInvoicePdfBase64(Base64.getEncoder().encodeToString(pdfBytes));
 
         ServiceBill savedBill = serviceBillRepository.save(bill);
         serviceRequest.setTotalAmount(totalAmount);
