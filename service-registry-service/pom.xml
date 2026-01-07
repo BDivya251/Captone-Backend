@@ -188,10 +188,12 @@
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.11</version>
 				<configuration>
-					<includes>
-						<include>com/vehiclemanagement/servicemanagement/controller/**</include>
-						<include>com/vehiclemanagement/servicemanagement/service/**</include>
-					</includes>
+					 <excludes>
+            <exclude>**/config/**</exclude>
+            <exclude>**/dto/**</exclude>
+            <exclude>**/*Application.*</exclude>
+            <exclude>**/exception/**</exclude>
+        </excludes>
 				</configuration>
 				<executions>
 					<!-- Attach JaCoCo agent while tests run -->
