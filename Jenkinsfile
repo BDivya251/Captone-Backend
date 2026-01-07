@@ -15,66 +15,25 @@ pipeline {
             }
         }
 
-        stage('Build Eureka Server') {
+        stage('Build All Microservices') {
             steps {
-                dir('eureka-server') {
-                    bat 'mvn clean package -DskipTests'
-                }
+                // Build all modules defined in the root pom.xml
+                bat 'mvn clean package -DskipTests'
             }
         }
 
-        stage('Build Config Server') {
+        stage('SonarQube Analysis') {
             steps {
-                dir('config-server') {
-                    bat 'mvn clean package -DskipTests'
-                }
-            }
-        }
-
-        stage('Build API Gateway') {
-            steps {
-                dir('api-gateway') {
-                    bat 'mvn clean package -DskipTests'
-                }
-            }
-        }
-
-        stage('Build User Service') {
-            steps {
-                dir('user-management-service') {
-                    bat 'mvn clean package -DskipTests'
-                }
-            }
-        }
-
-        stage('Build Vehicle Service') {
-            steps {
-                dir('vehicle-management-service') {
-                    bat 'mvn clean package -DskipTests'
-                }
-            }
-        }
-
-        stage('Build Service Registry') {
-            steps {
-                dir('service-registry-service') {
-                    bat 'mvn clean package -DskipTests'
-                }
-            }
-        }
-
-        stage('Build Inventory Service') {
-            steps {
-                dir('inventory-service-management1') {
-                    bat 'mvn clean package -DskipTests'
-                }
-            }
-        }
-
-        stage('Build Notification Service') {
-            steps {
-                dir('notification-service') {
-                    bat 'mvn clean package -DskipTests'
+                // Requires 'sonar-token' to be configured in Jenkins Credentials
+                withCredentials([string(credentialsId: 'sonar-token1', variable: 'SONAR_TOKEN')]) {
+                    script {
+                        if (isUnix()) {
+                            sh 'mvn sonar:sonar -Dsonar.token=$SONAR_TOKEN'
+                        } else {
+                            // Windows batch syntax for variables
+                            bat 'mvn sonar:sonar -Dsonar.token=%SONAR_TOKEN%'
+                        }
+                    }
                 }
             }
         }
