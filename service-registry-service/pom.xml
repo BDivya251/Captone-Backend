@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.vehiclemanagement</groupId>
-	<artifactId>user-service</artifactId>
+	<artifactId>service-registry-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>service-registry-service</name>
 	<description>inventory management</description>
