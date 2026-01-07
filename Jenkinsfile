@@ -15,10 +15,11 @@ pipeline {
             }
         }
 
-        stage('Build All Microservices') {
+        stage('Build & Coverage') {
             steps {
-                // Build all modules defined in the root pom.xml
-                bat 'mvn clean package -DskipTests'
+                // Run verify to execute tests and generate JaCoCo coverage reports
+                // Coverage settings (includes/excludes) are defined in the root pom.xml
+                bat 'mvn clean verify'
             }
         }
 
