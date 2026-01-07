@@ -98,6 +98,8 @@
                                 <include>**/service/**</include>
                             </includes>
                             <excludes>
+                             <exclude>**/utils/**</exclude>
+                             <exclude>**/listener/**</exclude>
                                 <exclude>**/config/**</exclude>
                                 <exclude>**/dto/**</exclude>
                                 <exclude>**/entity/**</exclude>
